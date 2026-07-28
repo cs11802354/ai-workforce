@@ -83,7 +83,10 @@ export function Runs() {
         <div className="form-section run-result">
           <div className="form-section-label">RESULT</div>
           <div className="badge-row">
-            <span className={`badge status-${activeRun.status}`}>{activeRun.status}</span>
+            <span className={`badge status-${activeRun.status}`}>
+              <span className="badge-dot" />
+              {activeRun.status}
+            </span>
           </div>
           <p className="run-output">
             {activeRun.status === "running" ? "Waiting on the workflow…" : activeRun.output_text}
@@ -99,9 +102,11 @@ export function Runs() {
         <div className="list">
           {history.map((run) => (
             <div key={run.id} className="list-row">
-              <span className={`status-dot status-${run.status}`} />
               <span className="list-row-main">{run.input_message}</span>
-              <span className="list-row-meta">{run.status}</span>
+              <span className={`badge status-${run.status}`}>
+                <span className="badge-dot" />
+                {run.status}
+              </span>
             </div>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
+import { avatarStyle } from "../lib/colors";
 import type { Agent } from "../types";
 
 export function Agents() {
@@ -19,6 +20,9 @@ export function Agents() {
     load();
   }
 
+  const providerCount = new Set(agents.map((a) => a.provider)).size;
+  const toolCount = new Set(agents.flatMap((a) => a.tools)).size;
+
   return (
     <div className="page">
       <div className="page-header-row">
@@ -27,6 +31,21 @@ export function Agents() {
           <p className="page-subtitle">{agents.length} managed</p>
         </div>
         <Link to="/agents/new" className="btn btn-primary">+ New agent</Link>
+      </div>
+
+      <div className="stat-bar">
+        <div className="stat-bar-item">
+          <div className="stat-value">{agents.length}</div>
+          <div className="stat-label">Total agents</div>
+        </div>
+        <div className="stat-bar-item">
+          <div className="stat-value">{providerCount}</div>
+          <div className="stat-label">Providers in use</div>
+        </div>
+        <div className="stat-bar-item">
+          <div className="stat-value">{toolCount}</div>
+          <div className="stat-label">Distinct tools</div>
+        </div>
       </div>
 
       {loading && <p className="empty-state">Loading…</p>}
@@ -38,15 +57,20 @@ export function Agents() {
         {agents.map((agent) => (
           <div key={agent.id} className="agent-card">
             <div className="agent-card-header">
-              <div className="agent-avatar">{agent.name.charAt(0).toUpperCase()}</div>
+              <div className="agent-avatar" style={avatarStyle(agent.id)}>
+                {agent.name.charAt(0).toUpperCase()}
+              </div>
               <div>
                 <div className="agent-name">{agent.name}</div>
                 <div className="agent-desc">{agent.description || "No description"}</div>
               </div>
             </div>
             <div className="badge-row">
-              <span className="badge">{agent.provider}</span>
-              <span className="badge">{agent.model}</span>
+              <span className="badge">
+                <span className="badge-dot" />
+                {agent.provider}
+              </span>
+              <span className="badge badge-muted">{agent.model}</span>
               {agent.tools.map((tool) => (
                 <span key={tool} className="badge badge-muted">{tool}</span>
               ))}
