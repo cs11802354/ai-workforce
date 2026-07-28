@@ -34,28 +34,28 @@ export function Agents() {
       </div>
 
       {loading ? (
-        <div className="stat-bar">
-          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+        <div className="stat-grid">
+          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
         </div>
       ) : (
-        <div className="stat-bar">
-          <div className="stat-bar-item">
+        <div className="stat-grid">
+          <div className="stat-card-item">
             <div className="stat-icon" style={tint("#6366F1")}>◆</div>
             <div>
               <div className="stat-value">{agents.length}</div>
               <div className="stat-label">Total agents</div>
             </div>
           </div>
-          <div className="stat-bar-item">
+          <div className="stat-card-item">
             <div className="stat-icon" style={tint("#3B82F6")}>⬡</div>
             <div>
               <div className="stat-value">{providerCount}</div>
               <div className="stat-label">Providers in use</div>
             </div>
           </div>
-          <div className="stat-bar-item">
+          <div className="stat-card-item">
             <div className="stat-icon" style={tint("#14B8A6")}>✦</div>
             <div>
               <div className="stat-value">{toolCount}</div>

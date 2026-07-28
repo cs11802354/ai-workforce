@@ -77,28 +77,28 @@ export function Home() {
       </div>
 
       {loading ? (
-        <div className="stat-bar">
-          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+        <div className="stat-grid">
+          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
         </div>
       ) : (
-        <div className="stat-bar">
-          <div className="stat-bar-item">
+        <div className="stat-grid">
+          <div className="stat-card-item">
             <div className="stat-icon" style={tint("#6366F1")}>⚙</div>
             <div>
               <div className="stat-value">{agents.length}</div>
               <div className="stat-label">Agents</div>
             </div>
           </div>
-          <div className="stat-bar-item">
+          <div className="stat-card-item">
             <div className="stat-icon" style={tint("#0EA5E9")}>▶</div>
             <div>
               <div className="stat-value">{runs.length}</div>
               <div className="stat-label">Runs total</div>
             </div>
           </div>
-          <div className="stat-bar-item">
+          <div className="stat-card-item">
             <div className="stat-icon" style={tint("#14B8A6")}>⚡</div>
             <div>
               <div className="stat-value">{runsToday}</div>
@@ -113,36 +113,36 @@ export function Home() {
           <h2>Analytics</h2>
         </div>
         {loading ? (
-          <div className="stat-bar">
-            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-grid">
+            <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+            <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+            <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+            <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
           </div>
         ) : (
-          <div className="stat-bar">
-            <div className="stat-bar-item">
+          <div className="stat-grid">
+            <div className="stat-card-item">
               <div className="stat-icon" style={tint("#17a76b")}>✓</div>
               <div>
                 <div className="stat-value">{successRate === null ? "—" : `${successRate}%`}</div>
                 <div className="stat-label">Success rate</div>
               </div>
             </div>
-            <div className="stat-bar-item">
+            <div className="stat-card-item">
               <div className="stat-icon" style={tint("#e0454f")}>✕</div>
               <div>
                 <div className="stat-value">{failedRuns.length}</div>
                 <div className="stat-label">Failed runs</div>
               </div>
             </div>
-            <div className="stat-bar-item">
+            <div className="stat-card-item">
               <div className="stat-icon" style={tint("#6366F1")}>★</div>
               <div>
                 <div className="stat-value stat-value-sm">{mostActiveAgentName}</div>
                 <div className="stat-label">Most active agent</div>
               </div>
             </div>
-            <div className="stat-bar-item">
+            <div className="stat-card-item">
               <div className="stat-icon" style={tint("#0EA5E9")}>◷</div>
               <div>
                 <div className="stat-value">{avgDurationMs === null ? "—" : formatDuration(avgDurationMs)}</div>
