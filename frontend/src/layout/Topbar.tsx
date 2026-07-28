@@ -1,4 +1,5 @@
-import { IconBell, IconMoon, IconPanel, IconSearch, IconSun } from "../components/Icon";
+import { auth } from "../api/client";
+import { IconBell, IconMoon, IconPanel, IconPower, IconSearch, IconSun } from "../components/Icon";
 import { useTheme } from "../lib/theme";
 
 type Props = {
@@ -40,6 +41,19 @@ export function Topbar({ collapsed, onToggleSidebar }: Props) {
         >
           {theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />}
         </button>
+        {auth.get() && (
+          <button
+            className="icon-btn"
+            onClick={() => {
+              auth.clear();
+              window.location.reload();
+            }}
+            aria-label="Sign out"
+            title="Sign out"
+          >
+            <IconPower size={16} />
+          </button>
+        )}
       </div>
     </header>
   );

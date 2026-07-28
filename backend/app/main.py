@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
+from app.auth import AuthDep, auth_enabled, check_password, issue_token
 from app.config import settings
 from app.routers import agents, conversations, runs
 
@@ -13,9 +15,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(agents.router)
-app.include_router(conversations.router)
-app.include_router(runs.router)
+# Every data route sits behind the gate; /healthz and /auth/* stay open.
+app.include_router(agents.router, dependencies=[AuthDep])
+app.include_router(conversations.router, dependencies=[AuthDep])
+app.include_router(runs.router, dependencies=[AuthDep])
+
+
+class LoginRequest(BaseModel):
+    password: str
+
+
+@app.get("/auth/status")
+def auth_status():
+    """Lets the client know whether to show a login screen at all."""
+    return {"required": auth_enabled()}
+
+
+@app.post("/auth/login")
+def login(payload: LoginRequest):
+    if not auth_enabled():
+        return {"token": ""}
+    if not check_password(payload.password):
+        raise HTTPException(401, "Incorrect password")
+    return {"token": issue_token()}
 
 
 @app.get("/healthz")

@@ -58,6 +58,7 @@ services:
       TEMPORAL_TASK_QUEUE: agent-tasks
       KNOWLEDGE_DIR: /data/knowledge
       CORS_ORIGINS: ${CORS_ORIGINS}
+      APP_PASSWORD: ${APP_PASSWORD}
     volumes:
       - knowledge_data:/data/knowledge
     ports:

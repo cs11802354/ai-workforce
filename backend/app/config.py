@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     temporal_task_queue: str = "agent-tasks"
     knowledge_dir: str = "/data/knowledge"
     cors_origins: str = "http://localhost:5173,https://app.manishlab.dev"
+    # Shared-password gate. Empty = gate disabled (local dev).
+    app_password: str = ""
 
     class Config:
         env_prefix = ""

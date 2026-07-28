@@ -1036,3 +1036,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
    disabled state already reads from the badge, the muted copy, and the missing
    checkbox. */
 .tool-card.disabled .tool-logo { opacity: 1; }
+
+/* ---- Login gate ---- */
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+  background-image: radial-gradient(circle at center, var(--dot) 1.4px, transparent 1.4px);
+  background-size: 20px 20px;
+}
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 30px 28px;
+  animation: fadeUp 0.4s var(--ease) both;
+}
+.login-brand { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; }
+.login-hint { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin: 0 0 18px; }
+.login-field { display: flex; align-items: center; gap: 8px; }
+.login-field .input { flex: 1; }
+.login .field-error { margin-top: 10px; }
