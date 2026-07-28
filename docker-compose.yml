@@ -45,7 +45,9 @@ services:
       - "127.0.0.1:8088:8080"
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     restart: unless-stopped
     depends_on:
       postgres:
@@ -65,7 +67,9 @@ services:
       - "127.0.0.1:8080:8000"
 
   worker:
-    build: ./worker
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
     restart: unless-stopped
     depends_on:
       - temporal
@@ -74,10 +78,12 @@ services:
       TEMPORAL_TASK_QUEUE: agent-tasks
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      TRUST_PANEL_TIER: ${TRUST_PANEL_TIER:-economy}
 
   frontend:
     build:
-      context: ./frontend
+      context: .
+      dockerfile: frontend/Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
     restart: unless-stopped

@@ -10,7 +10,7 @@ import type {
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-const TOKEN_KEY = "manlab-token";
+const TOKEN_KEY = "mklabs-token";
 
 export const auth = {
   get: () => localStorage.getItem(TOKEN_KEY),

@@ -4,9 +4,10 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /srv
 
-COPY requirements.txt .
+COPY worker/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY worker/ .
+COPY multi_model_trust/ ./multi_model_trust/
 
 CMD ["python", "worker.py"]

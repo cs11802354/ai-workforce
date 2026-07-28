@@ -12,7 +12,14 @@
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "baseUrl": ".",
+    "paths": {
+      "@trust/*": ["../multi_model_trust/ui/*"],
+      "react": ["./node_modules/@types/react"],
+      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime"],
+      "vite/client": ["./node_modules/vite/client.d.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../multi_model_trust/ui"]
 }

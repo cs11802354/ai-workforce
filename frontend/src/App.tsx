@@ -8,6 +8,7 @@ import { AgentEditor } from "./pages/AgentEditor";
 import { Chat } from "./pages/Chat";
 import { Analytics } from "./pages/Analytics";
 import { Login } from "./pages/Login";
+import { TrustPanel } from "@trust/TrustPanel";
 
 type Gate = "checking" | "locked" | "open";
 
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/agents/:id/edit" element={<AgentEditor />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/analytics" element={<Analytics />} />
+        <Route path="/trust" element={<TrustPanel />} />
       </Route>
     </Routes>
   );

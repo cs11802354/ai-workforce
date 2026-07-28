@@ -31,7 +31,7 @@ export function Login({ onSuccess }: { onSuccess: () => void }) {
         <div className="login-brand">
           <div className="brand-mark">M</div>
           <div className="brand-text">
-            <span className="brand-name">ManLab</span>
+            <span className="brand-name">MK Labs</span>
             <span className="brand-sub">Agent platform</span>
           </div>
         </div>
