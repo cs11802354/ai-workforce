@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { IconAgents, IconChevronLeft, IconChevronRight, IconHome, IconRuns } from "../components/Icon";
+import { IconAgents, IconChart, IconChevronLeft, IconChevronRight, IconHome, IconRuns } from "../components/Icon";
 
 const items = [
   { to: "/", label: "Home", Icon: IconHome, end: true },
   { to: "/agents", label: "Agents", Icon: IconAgents },
   { to: "/runs", label: "Runs", Icon: IconRuns },
+  { to: "/analytics", label: "Analytics", Icon: IconChart },
 ];
 
 export function Sidebar() {
