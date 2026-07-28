@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../api/client";
 import { avatarStyle, tint } from "../lib/colors";
+import { formatDuration } from "../lib/format";
 import type { Agent, Run } from "../types";
 
 export function Home() {
@@ -22,6 +23,27 @@ export function Home() {
   const runsToday = runs.filter(
     (r) => new Date(r.created_at).toDateString() === new Date().toDateString()
   ).length;
+
+  const completedRuns = runs.filter((r) => r.status === "completed");
+  const failedRuns = runs.filter((r) => r.status === "failed");
+  const finishedCount = completedRuns.length + failedRuns.length;
+  const successRate = finishedCount > 0 ? Math.round((completedRuns.length / finishedCount) * 100) : null;
+
+  const runCountByAgent = new Map<string, number>();
+  runs.forEach((r) => runCountByAgent.set(r.agent_id, (runCountByAgent.get(r.agent_id) || 0) + 1));
+  let mostActiveAgentName = "—";
+  let mostActiveCount = 0;
+  runCountByAgent.forEach((count, agentId) => {
+    if (count > mostActiveCount) {
+      mostActiveCount = count;
+      mostActiveAgentName = agentById.get(agentId)?.name || "—";
+    }
+  });
+
+  const durations = completedRuns
+    .filter((r) => r.completed_at)
+    .map((r) => new Date(r.completed_at!).getTime() - new Date(r.created_at).getTime());
+  const avgDurationMs = durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : null;
 
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -85,6 +107,51 @@ export function Home() {
           </div>
         </div>
       )}
+
+      <div className="section">
+        <div className="section-header">
+          <h2>Analytics</h2>
+        </div>
+        {loading ? (
+          <div className="stat-bar">
+            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+            <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          </div>
+        ) : (
+          <div className="stat-bar">
+            <div className="stat-bar-item">
+              <div className="stat-icon" style={tint("#17a76b")}>✓</div>
+              <div>
+                <div className="stat-value">{successRate === null ? "—" : `${successRate}%`}</div>
+                <div className="stat-label">Success rate</div>
+              </div>
+            </div>
+            <div className="stat-bar-item">
+              <div className="stat-icon" style={tint("#e0454f")}>✕</div>
+              <div>
+                <div className="stat-value">{failedRuns.length}</div>
+                <div className="stat-label">Failed runs</div>
+              </div>
+            </div>
+            <div className="stat-bar-item">
+              <div className="stat-icon" style={tint("#6366F1")}>★</div>
+              <div>
+                <div className="stat-value stat-value-sm">{mostActiveAgentName}</div>
+                <div className="stat-label">Most active agent</div>
+              </div>
+            </div>
+            <div className="stat-bar-item">
+              <div className="stat-icon" style={tint("#0EA5E9")}>◷</div>
+              <div>
+                <div className="stat-value">{avgDurationMs === null ? "—" : formatDuration(avgDurationMs)}</div>
+                <div className="stat-label">Avg run duration</div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="section">
         <div className="section-header">
