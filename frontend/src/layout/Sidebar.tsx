@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { IconAgents, IconChart, IconChevronLeft, IconChevronRight, IconHome, IconRuns } from "../components/Icon";
+import { IconAgents, IconChart, IconHome, IconRuns } from "../components/Icon";
 
 const items = [
   { to: "/", label: "Home", Icon: IconHome, end: true },
@@ -9,18 +8,7 @@ const items = [
   { to: "/analytics", label: "Analytics", Icon: IconChart },
 ];
 
-export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(() => localStorage.getItem("sidebar-collapsed") === "1");
-
-  useEffect(() => {
-    localStorage.setItem("sidebar-collapsed", collapsed ? "1" : "0");
-  }, [collapsed]);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 900px)");
-    if (mq.matches) setCollapsed(true);
-  }, []);
-
+export function Sidebar({ collapsed }: { collapsed: boolean }) {
   return (
     <aside className={"sidebar" + (collapsed ? " collapsed" : "")}>
       <div className="sidebar-head">
@@ -33,14 +21,6 @@ export function Sidebar() {
             </div>
           )}
         </div>
-        <button
-          className="sidebar-toggle"
-          onClick={() => setCollapsed((c) => !c)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <IconChevronRight size={15} /> : <IconChevronLeft size={15} />}
-        </button>
       </div>
 
       {!collapsed && <div className="sidebar-section-label">Workspace</div>}
