@@ -21,19 +21,9 @@ export function Sidebar() {
 
   return (
     <aside className={"sidebar" + (collapsed ? " collapsed" : "")}>
-      <div className="sidebar-top">
-        <div className="sidebar-brand">
-          <div className="brand-mark">M</div>
-          {!collapsed && <span>ManLab</span>}
-        </div>
-        <button
-          className="sidebar-toggle"
-          onClick={() => setCollapsed((c) => !c)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? "›" : "‹"}
-        </button>
+      <div className="sidebar-brand">
+        <div className="brand-mark">M</div>
+        {!collapsed && <span>ManLab</span>}
       </div>
 
       <nav className="sidebar-nav">
@@ -60,6 +50,15 @@ export function Sidebar() {
           </div>
         )}
       </div>
+
+      <button
+        className="sidebar-toggle"
+        onClick={() => setCollapsed((c) => !c)}
+        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {collapsed ? "›" : "‹"}
+      </button>
     </aside>
   );
 }
