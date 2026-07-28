@@ -1,4 +1,12 @@
-import type { Agent, Run, Tool } from "../types";
+import type {
+  Agent,
+  Conversation,
+  ConversationDetail,
+  Run,
+  Skill,
+  Tool,
+  Turn,
+} from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -8,7 +16,16 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     ...options,
   });
   if (!res.ok) {
-    throw new Error(`${options?.method || "GET"} ${path} failed: ${res.status}`);
+    // Surface the API's own message where it has one — a failed agent turn
+    // carries the provider error, which is what the user needs to see.
+    let detail = "";
+    try {
+      const body = await res.json();
+      detail = typeof body?.detail === "string" ? body.detail : "";
+    } catch {
+      /* non-JSON error body */
+    }
+    throw new Error(detail || `${options?.method || "GET"} ${path} failed: ${res.status}`);
   }
   if (res.status === 204) return undefined as T;
   return res.json();
@@ -32,10 +49,26 @@ export const api = {
     if (!res.ok) throw new Error("Knowledge file upload failed");
     return res.json() as Promise<Agent>;
   },
+
+  listSkills: () => request<Skill[]>("/skills"),
   listTools: () => request<Tool[]>("/tools"),
+
+  listConversations: () => request<Conversation[]>("/conversations"),
+  getConversation: (id: string) => request<ConversationDetail>(`/conversations/${id}`),
+  createConversation: (agentId: string) =>
+    request<Conversation>("/conversations", {
+      method: "POST",
+      body: JSON.stringify({ agent_id: agentId }),
+    }),
+  deleteConversation: (id: string) =>
+    request<void>(`/conversations/${id}`, { method: "DELETE" }),
+  sendMessage: (conversationId: string, content: string) =>
+    request<Turn>(`/conversations/${conversationId}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ content }),
+    }),
+
   listRuns: () => request<Run[]>("/runs"),
   listRunsForAgent: (agentId: string) => request<Run[]>(`/agents/${agentId}/runs`),
-  startRun: (agentId: string, input: string) =>
-    request<Run>("/runs", { method: "POST", body: JSON.stringify({ agent_id: agentId, input }) }),
   getRun: (id: string) => request<Run>(`/runs/${id}`),
 };

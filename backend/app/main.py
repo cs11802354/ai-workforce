@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import agents, runs
+from app.routers import agents, conversations, runs
 
 app = FastAPI(title="Agent Platform API")
 
@@ -14,6 +14,7 @@ app.add_middleware(
 )
 
 app.include_router(agents.router)
+app.include_router(conversations.router)
 app.include_router(runs.router)
 
 
