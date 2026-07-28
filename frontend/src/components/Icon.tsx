@@ -138,3 +138,11 @@ export const IconCube = ({ size = 16, className }: IconProps) => (
     <path d="M12 12v9M12 12l8-4.5M12 12 4 7.5" />
   </svg>
 );
+
+export const IconChart = ({ size = 18, className }: IconProps) => (
+  <svg {...base(size)} className={className}>
+    <path d="M4 20V4" />
+    <path d="M4 20h16" />
+    <path d="m7.5 15 3.5-4 3 2.5L20 7" />
+  </svg>
+);
