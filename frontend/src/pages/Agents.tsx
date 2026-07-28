@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
-import { avatarStyle } from "../lib/colors";
+import { avatarStyle, tint } from "../lib/colors";
 import type { Agent } from "../types";
 
 export function Agents() {
@@ -33,28 +33,45 @@ export function Agents() {
         <Link to="/agents/new" className="btn btn-primary">+ New agent</Link>
       </div>
 
-      <div className="stat-bar">
-        <div className="stat-bar-item">
-          <div className="stat-value">{agents.length}</div>
-          <div className="stat-label">Total agents</div>
+      {loading ? (
+        <div className="stat-bar">
+          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
         </div>
-        <div className="stat-bar-item">
-          <div className="stat-value">{providerCount}</div>
-          <div className="stat-label">Providers in use</div>
+      ) : (
+        <div className="stat-bar">
+          <div className="stat-bar-item">
+            <div className="stat-icon" style={tint("#6366F1")}>◆</div>
+            <div>
+              <div className="stat-value">{agents.length}</div>
+              <div className="stat-label">Total agents</div>
+            </div>
+          </div>
+          <div className="stat-bar-item">
+            <div className="stat-icon" style={tint("#3B82F6")}>⬡</div>
+            <div>
+              <div className="stat-value">{providerCount}</div>
+              <div className="stat-label">Providers in use</div>
+            </div>
+          </div>
+          <div className="stat-bar-item">
+            <div className="stat-icon" style={tint("#14B8A6")}>✦</div>
+            <div>
+              <div className="stat-value">{toolCount}</div>
+              <div className="stat-label">Distinct tools</div>
+            </div>
+          </div>
         </div>
-        <div className="stat-bar-item">
-          <div className="stat-value">{toolCount}</div>
-          <div className="stat-label">Distinct tools</div>
-        </div>
-      </div>
+      )}
 
-      {loading && <p className="empty-state">Loading…</p>}
       {!loading && agents.length === 0 && (
         <p className="empty-state">No agents yet — create your first one.</p>
       )}
 
       <div className="card-grid">
-        {agents.map((agent) => (
+        {loading && [0, 1, 2].map((i) => <div key={i} className="skeleton skeleton-card" />)}
+        {!loading && agents.map((agent) => (
           <div key={agent.id} className="agent-card">
             <div className="agent-card-header">
               <div className="agent-avatar" style={avatarStyle(agent.id)}>

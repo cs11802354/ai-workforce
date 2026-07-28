@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../api/client";
-import { avatarStyle } from "../lib/colors";
+import { avatarStyle, tint } from "../lib/colors";
 import type { Agent, Run } from "../types";
 
 export function Home() {
@@ -9,10 +9,13 @@ export function Home() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [runs, setRuns] = useState<Run[]>([]);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.listAgents().then(setAgents).catch(() => {});
-    api.listRuns().then(setRuns).catch(() => {});
+    Promise.all([
+      api.listAgents().then(setAgents).catch(() => {}),
+      api.listRuns().then(setRuns).catch(() => {}),
+    ]).finally(() => setLoading(false));
   }, []);
 
   const agentById = new Map(agents.map((a) => [a.id, a]));
@@ -51,29 +54,53 @@ export function Home() {
         </div>
       </div>
 
-      <div className="stat-bar">
-        <div className="stat-bar-item">
-          <div className="stat-value">{agents.length}</div>
-          <div className="stat-label">Agents</div>
+      {loading ? (
+        <div className="stat-bar">
+          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
+          <div className="stat-bar-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
         </div>
-        <div className="stat-bar-item">
-          <div className="stat-value">{runs.length}</div>
-          <div className="stat-label">Runs total</div>
+      ) : (
+        <div className="stat-bar">
+          <div className="stat-bar-item">
+            <div className="stat-icon" style={tint("#6366F1")}>⚙</div>
+            <div>
+              <div className="stat-value">{agents.length}</div>
+              <div className="stat-label">Agents</div>
+            </div>
+          </div>
+          <div className="stat-bar-item">
+            <div className="stat-icon" style={tint("#0EA5E9")}>▶</div>
+            <div>
+              <div className="stat-value">{runs.length}</div>
+              <div className="stat-label">Runs total</div>
+            </div>
+          </div>
+          <div className="stat-bar-item">
+            <div className="stat-icon" style={tint("#14B8A6")}>⚡</div>
+            <div>
+              <div className="stat-value">{runsToday}</div>
+              <div className="stat-label">Runs today</div>
+            </div>
+          </div>
         </div>
-        <div className="stat-bar-item">
-          <div className="stat-value">{runsToday}</div>
-          <div className="stat-label">Runs today</div>
-        </div>
-      </div>
+      )}
 
       <div className="section">
         <div className="section-header">
           <h2>Recent runs</h2>
           <Link to="/runs">View all</Link>
         </div>
-        {runs.length === 0 && <p className="empty-state">No runs yet.</p>}
+        {loading && (
+          <div>
+            <div className="skeleton skeleton-row" />
+            <div className="skeleton skeleton-row" />
+            <div className="skeleton skeleton-row" />
+          </div>
+        )}
+        {!loading && runs.length === 0 && <p className="empty-state">No runs yet.</p>}
         <div className="list">
-          {runs.slice(0, 5).map((run) => {
+          {!loading && runs.slice(0, 5).map((run) => {
             const agent = agentById.get(run.agent_id);
             return (
               <div key={run.id} className="list-row">
