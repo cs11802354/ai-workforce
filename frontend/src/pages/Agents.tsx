@@ -71,8 +71,8 @@ export function Agents() {
 
       <div className="card-grid">
         {loading && [0, 1, 2].map((i) => <div key={i} className="skeleton skeleton-card" />)}
-        {!loading && agents.map((agent) => (
-          <div key={agent.id} className="agent-card">
+        {!loading && agents.map((agent, i) => (
+          <div key={agent.id} className="agent-card fade-up" style={{ animationDelay: `${i * 40}ms` }}>
             <div className="agent-card-header">
               <div className="agent-avatar" style={avatarStyle(agent.id)}>
                 {agent.name.charAt(0).toUpperCase()}
