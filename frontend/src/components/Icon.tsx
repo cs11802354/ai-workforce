@@ -153,3 +153,10 @@ export const IconPanel = ({ size = 16, className }: IconProps) => (
     <path d="M9.5 4.5v15" />
   </svg>
 );
+
+export const IconChat = ({ size = 18, className }: IconProps) => (
+  <svg {...base(size)} className={className}>
+    <path d="M20.5 12a8 8 0 0 1-8 8H8l-4 3v-4.6A8 8 0 1 1 20.5 12z" />
+    <path d="M8.5 11h7M8.5 14.5h4.5" />
+  </svg>
+);

@@ -3,7 +3,7 @@ import { AppShell } from "./layout/AppShell";
 import { Home } from "./pages/Home";
 import { Agents } from "./pages/Agents";
 import { AgentEditor } from "./pages/AgentEditor";
-import { Runs } from "./pages/Runs";
+import { Chat } from "./pages/Chat";
 import { Analytics } from "./pages/Analytics";
 
 export default function App() {
@@ -14,7 +14,7 @@ export default function App() {
         <Route path="/agents" element={<Agents />} />
         <Route path="/agents/new" element={<AgentEditor />} />
         <Route path="/agents/:id/edit" element={<AgentEditor />} />
-        <Route path="/runs" element={<Runs />} />
+        <Route path="/chat" element={<Chat />} />
         <Route path="/analytics" element={<Analytics />} />
       </Route>
     </Routes>

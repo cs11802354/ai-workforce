@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/client";
 import { IconCube, IconSparkle } from "../components/Icon";
-import type { Agent, Tool } from "../types";
+import type { Agent, Skill, Tool } from "../types";
 
 const PROVIDER_MODELS: Record<string, string[]> = {
-  anthropic: ["claude-sonnet-5", "claude-opus-5", "claude-haiku-4-5"],
+  anthropic: ["claude-opus-5", "claude-sonnet-5", "claude-haiku-4-5"],
   openai: ["gpt-5", "gpt-5-mini"],
 };
 
@@ -21,47 +21,59 @@ export function AgentEditor() {
   const isEdit = Boolean(id);
 
   const [name, setName] = useState("");
-  const [description, setDescription] = useState(
+  const [role, setRole] = useState(
     (location.state as { initialDescription?: string } | null)?.initialDescription || ""
   );
   const [provider, setProvider] = useState<"anthropic" | "openai">("anthropic");
   const [model, setModel] = useState(PROVIDER_MODELS.anthropic[0]);
+  const [skills, setSkills] = useState<string[]>([]);
   const [tools, setTools] = useState<string[]>([]);
+  const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
   const [availableTools, setAvailableTools] = useState<Tool[]>([]);
   const [knowledgeFileName, setKnowledgeFileName] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [touched, setTouched] = useState<{ name?: boolean; role?: boolean }>({});
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    api.listSkills().then(setAvailableSkills).catch(() => {});
     api.listTools().then(setAvailableTools).catch(() => {});
     if (id) {
       api.getAgent(id).then((agent: Agent) => {
         setName(agent.name);
-        setDescription(agent.description);
+        setRole(agent.role);
         setProvider(agent.provider);
         setModel(agent.model);
+        setSkills(agent.skills);
         setTools(agent.tools);
         setKnowledgeFileName(agent.knowledge_file_name);
       });
     }
   }, [id]);
 
-  function toggleTool(toolId: string) {
-    setTools((prev) =>
-      prev.includes(toolId) ? prev.filter((t) => t !== toolId) : [...prev, toolId]
+  const nameError = !name.trim() ? "Name is required." : null;
+  const roleError = !role.trim() ? "Role is required." : null;
+  const canSave = !nameError && !roleError && Boolean(model);
+
+  function toggleSkill(skillId: string) {
+    setSkills((prev) =>
+      prev.includes(skillId) ? prev.filter((s) => s !== skillId) : [...prev, skillId]
     );
   }
 
   async function handleSave() {
-    if (!name.trim()) return;
+    setTouched({ name: true, role: true });
+    if (!canSave || saving) return;
     setSaving(true);
+    setError(null);
     try {
-      const payload = { name, description, provider, model, tools };
+      const payload = { name: name.trim(), role: role.trim(), provider, model, skills, tools };
       const agent = isEdit ? await api.updateAgent(id!, payload) : await api.createAgent(payload);
-      if (pendingFile) {
-        await api.uploadKnowledgeFile(agent.id, pendingFile);
-      }
+      if (pendingFile) await api.uploadKnowledgeFile(agent.id, pendingFile);
       navigate("/agents");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save the agent.");
     } finally {
       setSaving(false);
     }
@@ -73,42 +85,57 @@ export function AgentEditor() {
         <div>
           <h1 className="page-title">{isEdit ? "Edit agent" : "New agent"}</h1>
           <p className="page-subtitle" style={{ marginBottom: 0 }}>
-            Type into any field to build your agent.
+            Name, role and model are required.
           </p>
         </div>
-        <button className="btn btn-primary" onClick={handleSave} disabled={saving || !name.trim()}>
+        <button className="btn btn-primary" onClick={handleSave} disabled={saving || !canSave}>
           {saving ? "Saving…" : isEdit ? "Save agent" : "Create agent"}
         </button>
       </div>
 
+      {error && <div className="chat-error" style={{ marginBottom: 16 }}>{error}</div>}
+
       <div className="form-section">
-        <div className="form-section-label">IDENTITY</div>
+        <div className="form-section-label">
+          Identity <span className="req">required</span>
+        </div>
         <div className="form-row" style={{ alignItems: "flex-start" }}>
           <div className="icon-box"><IconSparkle size={19} /></div>
           <div style={{ flex: 1 }}>
-            <label className="form-label">Name your agent</label>
+            <label className="form-label" htmlFor="agent-name">Name your agent</label>
             <input
-              className="input"
-              placeholder="e.g. Support Triage Assistant"
+              id="agent-name"
+              className={"input" + (touched.name && nameError ? " invalid" : "")}
+              placeholder="e.g. Equity Research Assistant"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, name: true }))}
+              aria-invalid={Boolean(touched.name && nameError)}
             />
+            {touched.name && nameError && <p className="field-error">{nameError}</p>}
           </div>
         </div>
       </div>
 
       <div className="form-section">
-        <div className="form-section-label">ROLE &amp; OBJECTIVES</div>
+        <div className="form-section-label">
+          Role <span className="req">required</span>
+        </div>
         <textarea
-          className="input textarea"
-          placeholder="Describe what this agent is responsible for…"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          className={"input textarea" + (touched.role && roleError ? " invalid" : "")}
+          placeholder="What is this agent responsible for?"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          onBlur={() => setTouched((t) => ({ ...t, role: true }))}
+          aria-invalid={Boolean(touched.role && roleError)}
         />
+        {touched.role && roleError && <p className="field-error">{roleError}</p>}
       </div>
 
       <div className="form-section">
-        <div className="form-section-label">MODEL</div>
+        <div className="form-section-label">
+          Model <span className="req">required</span>
+        </div>
         <div className="option-grid">
           {PROVIDERS.map((p) => (
             <button
@@ -128,7 +155,12 @@ export function AgentEditor() {
             </button>
           ))}
         </div>
-        <select className="input" style={{ marginTop: 10 }} value={model} onChange={(e) => setModel(e.target.value)}>
+        <select
+          className="input"
+          style={{ marginTop: 10 }}
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+        >
           {PROVIDER_MODELS[provider].map((m) => (
             <option key={m} value={m}>{m}</option>
           ))}
@@ -136,18 +168,24 @@ export function AgentEditor() {
       </div>
 
       <div className="form-section">
-        <div className="form-section-label">SKILLS</div>
+        <div className="form-section-label">Skills</div>
+        <p className="section-hint">
+          Context the agent reasons with — it shapes which tool the model reaches for.
+        </p>
         <div className="tool-grid">
-          {availableTools.map((tool) => (
-            <label key={tool.id} className={"tool-check" + (tools.includes(tool.id) ? " checked" : "")}>
+          {availableSkills.map((skill) => (
+            <label
+              key={skill.id}
+              className={"tool-check" + (skills.includes(skill.id) ? " checked" : "")}
+            >
               <input
                 type="checkbox"
-                checked={tools.includes(tool.id)}
-                onChange={() => toggleTool(tool.id)}
+                checked={skills.includes(skill.id)}
+                onChange={() => toggleSkill(skill.id)}
               />
               <div>
-                <div className="tool-name">{tool.name}</div>
-                <div className="tool-desc">{tool.description}</div>
+                <div className="tool-name">{skill.name}</div>
+                <div className="tool-desc">{skill.description}</div>
               </div>
             </label>
           ))}
@@ -155,7 +193,28 @@ export function AgentEditor() {
       </div>
 
       <div className="form-section">
-        <div className="form-section-label">KNOWLEDGE &amp; FILES</div>
+        <div className="form-section-label">
+          Tools <span className="soon">Demo — not connected</span>
+        </div>
+        <p className="section-hint">
+          Data sources the agent can call. The dispatch path is live; the adapters
+          are stubs, so these stay disabled for now.
+        </p>
+        <div className="tool-grid">
+          {availableTools.map((tool) => (
+            <div key={tool.id} className="tool-check disabled" aria-disabled="true">
+              <input type="checkbox" checked={false} disabled readOnly />
+              <div>
+                <div className="tool-name">{tool.name}</div>
+                <div className="tool-desc">{tool.description}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-label">Knowledge &amp; files</div>
         <div className="file-drop">
           <input
             type="file"

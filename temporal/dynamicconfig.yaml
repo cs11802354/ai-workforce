@@ -1,0 +1,15 @@
+# Temporal server dynamic config.
+#
+# Chat turns use Update-with-Start (client.execute_update_with_start_workflow):
+# one call that starts the conversation workflow if it isn't running and executes
+# the turn, returning the assistant's reply. That needs BOTH of these flags —
+# the server ships them disabled, and each one fails with its own error:
+#
+#   frontend.enableUpdateWorkflowExecution off ->
+#       "UpdateWorkflowExecution operation is disabled on this namespace."
+#   frontend.enableExecuteMultiOperation off ->
+#       "ExecuteMultiOperation API is disabled on this namespace."
+frontend.enableUpdateWorkflowExecution:
+  - value: true
+frontend.enableExecuteMultiOperation:
+  - value: true

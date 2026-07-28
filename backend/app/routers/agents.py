@@ -7,14 +7,22 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.db import get_db
 from app.models import Agent
-from app.schemas import AgentCreate, AgentOut, AgentUpdate, ToolOut
-from app.tools_catalog import TOOLS
+from app.catalog import SKILLS, TOOLS
+from app.schemas import AgentCreate, AgentOut, AgentUpdate, CatalogItem, ToolItem
 
 router = APIRouter()
 
 
-@router.get("/tools", response_model=list[ToolOut])
+@router.get("/skills", response_model=list[CatalogItem])
+def list_skills():
+    """Prose capabilities folded into the agent's system prompt."""
+    return [{k: s[k] for k in ("id", "name", "description")} for s in SKILLS]
+
+
+@router.get("/tools", response_model=list[ToolItem])
 def list_tools():
+    """Callable data tools. All disabled in this demo — the dispatch path is
+    real, only the adapters are stubs."""
     return TOOLS
 
 

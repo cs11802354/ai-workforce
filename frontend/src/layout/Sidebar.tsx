@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { IconAgents, IconChart, IconHome, IconRuns } from "../components/Icon";
+import { IconAgents, IconChart, IconChat, IconHome } from "../components/Icon";
 
 const items = [
   { to: "/", label: "Home", Icon: IconHome, end: true },
   { to: "/agents", label: "Agents", Icon: IconAgents },
-  { to: "/runs", label: "Runs", Icon: IconRuns },
+  { to: "/chat", label: "Chat", Icon: IconChat },
   { to: "/analytics", label: "Analytics", Icon: IconChart },
 ];
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../api/client";
 import { avatarStyle, tint } from "../lib/colors";
-import { IconAgents, IconArrowUp, IconBolt, IconPlus, IconRuns, IconSparkle } from "../components/Icon";
+import { IconAgents, IconArrowUp, IconBolt, IconChat, IconPlus, IconRuns, IconSparkle } from "../components/Icon";
 import type { Agent, Run } from "../types";
 
 export function Home() {
@@ -54,7 +54,7 @@ export function Home() {
 
         <div className="hero-chips">
           <Link to="/agents/new" className="chip"><IconPlus size={14} /> Build a new agent</Link>
-          <Link to="/runs" className="chip"><IconRuns size={14} /> Run an agent</Link>
+          <Link to="/chat" className="chip"><IconChat size={14} /> Chat with an agent</Link>
           <Link to="/agents" className="chip"><IconAgents size={14} /> View all agents</Link>
         </div>
       </div>
@@ -94,7 +94,7 @@ export function Home() {
       <div className="section">
         <div className="section-header">
           <h2>Recent runs</h2>
-          <Link to="/runs">View all</Link>
+          <Link to="/chat">Open chat</Link>
         </div>
         {loading && (
           <div>

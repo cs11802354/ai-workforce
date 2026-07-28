@@ -27,6 +27,9 @@ services:
       POSTGRES_PWD: ${POSTGRES_PASSWORD}
       POSTGRES_SEEDS: postgres
       DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/docker.yaml
+    volumes:
+      # Enables ExecuteMultiOperation, which Update-with-Start depends on.
+      - ./temporal/dynamicconfig.yaml:/etc/temporal/config/dynamicconfig/docker.yaml:ro
     ports:
       - "127.0.0.1:7233:7233"
 

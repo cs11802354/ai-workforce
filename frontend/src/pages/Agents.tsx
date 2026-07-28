@@ -22,7 +22,7 @@ export function Agents() {
   }
 
   const providerCount = new Set(agents.map((a) => a.provider)).size;
-  const toolCount = new Set(agents.flatMap((a) => a.tools)).size;
+  const toolCount = new Set(agents.flatMap((a) => a.skills)).size;
 
   return (
     <div className="page">
@@ -80,7 +80,7 @@ export function Agents() {
               </div>
               <div>
                 <div className="agent-name">{agent.name}</div>
-                <div className="agent-desc">{agent.description || "No description"}</div>
+                <div className="agent-desc">{agent.role}</div>
               </div>
             </div>
             <div className="badge-row">
@@ -89,13 +89,13 @@ export function Agents() {
                 {agent.provider}
               </span>
               <span className="badge badge-muted">{agent.model}</span>
-              {agent.tools.map((tool) => (
+              {agent.skills.map((tool) => (
                 <span key={tool} className="badge badge-muted">{tool}</span>
               ))}
             </div>
             <div className="agent-card-actions">
               <Link to={`/agents/${agent.id}/edit`} className="btn btn-ghost btn-sm">Edit</Link>
-              <Link to={`/runs?agent=${agent.id}`} className="btn btn-ghost btn-sm">Run</Link>
+              <Link to={`/chat?agent=${agent.id}`} className="btn btn-ghost btn-sm">Chat</Link>
               <button className="btn btn-ghost btn-sm btn-danger" onClick={() => handleDelete(agent.id)}>
                 Delete
               </button>
