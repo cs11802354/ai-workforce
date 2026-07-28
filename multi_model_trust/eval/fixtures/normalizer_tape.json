@@ -1,0 +1,291 @@
+{
+  "01-unanimous-sourced": [
+    {
+      "canonical": "Q4 revenue was $48.2 million",
+      "members": [
+        {
+          "claim_id": "c01a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c01b1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c01c1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "02-paraphrase-agreement": [
+    {
+      "canonical": "Year-over-year revenue growth was 12%",
+      "members": [
+        {
+          "claim_id": "c02a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c02b1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c02c1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "03-negation-conflict": [
+    {
+      "canonical": "Operating margin improved year over year",
+      "members": [
+        {
+          "claim_id": "c03a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c03b1",
+          "stance": "rejects"
+        },
+        {
+          "claim_id": "c03c1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "04-numeric-conflict": [
+    {
+      "canonical": "Q4 revenue amount",
+      "members": [
+        {
+          "claim_id": "c04a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c04b1",
+          "stance": "rejects"
+        }
+      ]
+    }
+  ],
+  "05-conditional-agreement": [
+    {
+      "canonical": "Full-year 2026 revenue will exceed $210 million",
+      "members": [
+        {
+          "claim_id": "c05a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c05b1",
+          "stance": "conditional"
+        }
+      ]
+    }
+  ],
+  "06-single-source-minority": [
+    {
+      "canonical": "Q4 revenue was $48.2 million",
+      "members": [
+        {
+          "claim_id": "c06a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c06b1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c06c1",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "canonical": "Headcount fell to 1,240 by the end of Q4",
+      "members": [
+        {
+          "claim_id": "c06a2",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "07-broken-citation": [
+    {
+      "canonical": "Free cash flow was negative $3.1 million in Q4",
+      "members": [
+        {
+          "claim_id": "c07a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c07b1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "08-fabricated-quote": [
+    {
+      "canonical": "Q4 revenue was $48.2 million",
+      "members": [
+        {
+          "claim_id": "c08a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c08b1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "09-panel-degraded": [
+    {
+      "canonical": "Q4 revenue was $48.2 million",
+      "members": [
+        {
+          "claim_id": "c09a1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "10-low-confidence-conflict": [
+    {
+      "canonical": "The logistics division grew in Q4",
+      "members": [
+        {
+          "claim_id": "c10a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c10b1",
+          "stance": "rejects"
+        }
+      ]
+    }
+  ],
+  "11-shared-vocabulary-distinct-claims": [
+    {
+      "canonical": "Q4 revenue was $48.2 million",
+      "members": [
+        {
+          "claim_id": "c11a1",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "canonical": "Q4 operating margin was 8.4%",
+      "members": [
+        {
+          "claim_id": "c11b1",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "canonical": "Q4 ending headcount was 1,240",
+      "members": [
+        {
+          "claim_id": "c11c1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "12-no-corpus-unverified": [
+    {
+      "canonical": "Northwind would be an appealing acquisition target",
+      "members": [
+        {
+          "claim_id": "c12a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c12b1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "13-majority-not-unanimous": [
+    {
+      "canonical": "Q4 revenue was $48.2 million",
+      "members": [
+        {
+          "claim_id": "c13a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c13b1",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "canonical": "Free cash flow was negative $3.1 million in Q4",
+      "members": [
+        {
+          "claim_id": "c13a2",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "canonical": "Q4 operating margin was 8.4%",
+      "members": [
+        {
+          "claim_id": "c13c1",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "14-partial-coverage-majorities": [
+    {
+      "canonical": "Q4 revenue was $48.2 million",
+      "members": [
+        {
+          "claim_id": "c14a1",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c14b1",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "canonical": "Operating margin in Q4 was 8.4%",
+      "members": [
+        {
+          "claim_id": "c14a2",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c14c1",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "canonical": "Headcount at the end of Q4 was 1,240",
+      "members": [
+        {
+          "claim_id": "c14b2",
+          "stance": "supports"
+        },
+        {
+          "claim_id": "c14c2",
+          "stance": "supports"
+        }
+      ]
+    }
+  ]
+}

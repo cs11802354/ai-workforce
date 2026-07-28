@@ -167,3 +167,25 @@ export const IconPower = ({ size = 16, className }: IconProps) => (
     <path d="M7.5 6.6a7 7 0 1 0 9 0" />
   </svg>
 );
+
+export function IconScales({ size = 18, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 3v18" />
+      <path d="M6 21h12" />
+      <path d="M4 7h16" />
+      <path d="M7 7l-3 6a3 3 0 0 0 6 0z" />
+      <path d="M17 7l-3 6a3 3 0 0 0 6 0z" />
+    </svg>
+  );
+}

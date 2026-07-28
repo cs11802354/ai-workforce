@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from app.auth import AuthDep, auth_enabled, check_password, issue_token
 from app.config import settings
 from app.routers import agents, conversations, runs
+from multi_model_trust.api import router as trust_router
 
 app = FastAPI(title="Agent Platform API")
 
@@ -19,6 +20,7 @@ app.add_middleware(
 app.include_router(agents.router, dependencies=[AuthDep])
 app.include_router(conversations.router, dependencies=[AuthDep])
 app.include_router(runs.router, dependencies=[AuthDep])
+app.include_router(trust_router, dependencies=[AuthDep])
 
 
 class LoginRequest(BaseModel):

@@ -1,0 +1,1122 @@
+[
+  {
+    "id": "01-unanimous-sourced",
+    "note": "Three models, same claim, all citing a real span. The clean case.",
+    "query": "What was Northwind Robotics' Q4 revenue?",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "$48.2 million.",
+        "claims": [
+          {
+            "id": "c01a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.95,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Revenue was $48.2M.",
+        "claims": [
+          {
+            "id": "c01b1",
+            "text": "Northwind posted $48.2 million in fourth-quarter revenue",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-c",
+        "answer": "Q4 revenue came in at $48.2 million.",
+        "claims": [
+          {
+            "id": "c01c1",
+            "text": "Revenue for Q4 came in at $48.2 million",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c01a1",
+          "c01b1",
+          "c01c1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "high",
+      "citations": {
+        "c01a1": "verified",
+        "c01b1": "verified",
+        "c01c1": "verified"
+      },
+      "rejects": [],
+      "verdicts": [
+        "unanimous"
+      ]
+    }
+  },
+  {
+    "id": "02-paraphrase-agreement",
+    "note": "Same claim in three different vocabularies. Tests that clustering survives paraphrase.",
+    "query": "How fast did Northwind's revenue grow?",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "12% YoY.",
+        "claims": [
+          {
+            "id": "c02a1",
+            "text": "Revenue grew 12% year over year",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "up 12% year over year"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Growth was 12 percent.",
+        "claims": [
+          {
+            "id": "c02b1",
+            "text": "Year-over-year revenue growth was 12 percent",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "up 12% year over year"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-c",
+        "answer": "Sales rose 12%.",
+        "claims": [
+          {
+            "id": "c02c1",
+            "text": "Sales increased 12% compared with the prior year",
+            "confidence": 0.85,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "up 12% year over year"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c02a1",
+          "c02b1",
+          "c02c1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "high",
+      "citations": {
+        "c02a1": "verified",
+        "c02b1": "verified",
+        "c02c1": "verified"
+      },
+      "rejects": [],
+      "verdicts": [
+        "unanimous"
+      ]
+    }
+  },
+  {
+    "id": "03-negation-conflict",
+    "note": "The case embeddings alone cannot solve: near-identical vectors, opposite polarity.",
+    "query": "Did Northwind's operating margin improve?",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Yes, it improved.",
+        "claims": [
+          {
+            "id": "c03a1",
+            "text": "Operating margin improved year over year",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s2",
+                "quote": "Operating margin for the quarter was 8.4%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "No, it did not improve.",
+        "claims": [
+          {
+            "id": "c03b1",
+            "text": "Operating margin did not improve year over year",
+            "confidence": 0.8,
+            "evidence": [
+              {
+                "source_id": "s2",
+                "quote": "Operating margin for the quarter was 8.4%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-c",
+        "answer": "It improved to 8.4%.",
+        "claims": [
+          {
+            "id": "c03c1",
+            "text": "Operating margin improved from the prior year",
+            "confidence": 0.93,
+            "evidence": [
+              {
+                "source_id": "s2",
+                "quote": "compared with 6.1% in the prior year"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c03a1",
+          "c03b1",
+          "c03c1"
+        ]
+      ],
+      "conflicts": [
+        [
+          "c03a1",
+          "c03b1",
+          "c03c1"
+        ]
+      ],
+      "trust_status": "contested",
+      "citations": {
+        "c03a1": "verified",
+        "c03b1": "verified",
+        "c03c1": "verified"
+      },
+      "rejects": [
+        "c03b1"
+      ],
+      "verdicts": [
+        "conflict"
+      ]
+    }
+  },
+  {
+    "id": "04-numeric-conflict",
+    "note": "Same shape of sentence, different number. A wrong figure stated confidently.",
+    "query": "What was Q4 revenue?",
+    "panel": [
+      "model-a",
+      "model-b"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "$48.2 million.",
+        "claims": [
+          {
+            "id": "c04a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.94,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "$42.8 million.",
+        "claims": [
+          {
+            "id": "c04b1",
+            "text": "Q4 revenue was $42.8 million",
+            "confidence": 0.71,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $42.8 million"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c04a1",
+          "c04b1"
+        ]
+      ],
+      "conflicts": [
+        [
+          "c04a1",
+          "c04b1"
+        ]
+      ],
+      "trust_status": "contested",
+      "citations": {
+        "c04a1": "verified",
+        "c04b1": "unsupported"
+      },
+      "rejects": [
+        "c04b1"
+      ],
+      "verdicts": [
+        "conflict"
+      ]
+    }
+  },
+  {
+    "id": "05-conditional-agreement",
+    "note": "Agreement that depends on a caveat one model attaches and the other does not.",
+    "query": "Will Northwind exceed $210 million in 2026?",
+    "panel": [
+      "model-a",
+      "model-b"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Yes.",
+        "claims": [
+          {
+            "id": "c05a1",
+            "text": "Full-year 2026 revenue will exceed $210 million",
+            "confidence": 0.6,
+            "evidence": [
+              {
+                "source_id": "s5",
+                "quote": "full-year 2026 revenue of $205 million to $215 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Only if logistics recovers.",
+        "claims": [
+          {
+            "id": "c05b1",
+            "text": "Full-year 2026 revenue will exceed $210 million only if the logistics division recovers",
+            "confidence": 0.65,
+            "evidence": [
+              {
+                "source_id": "s5",
+                "quote": "full-year 2026 revenue of $205 million to $215 million"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c05a1",
+          "c05b1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c05a1": "verified",
+        "c05b1": "verified"
+      },
+      "rejects": [],
+      "verdicts": [
+        "conditional"
+      ]
+    }
+  },
+  {
+    "id": "06-single-source-minority",
+    "note": "One model raises something the others never mention. Must survive to the report.",
+    "query": "Summarise Northwind's Q4.",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Revenue $48.2M; headcount fell.",
+        "claims": [
+          {
+            "id": "c06a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          },
+          {
+            "id": "c06a2",
+            "text": "Headcount fell to 1,240 by the end of Q4",
+            "confidence": 0.85,
+            "evidence": [
+              {
+                "source_id": "s4",
+                "quote": "Headcount fell to 1,240 at the end of Q4"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Revenue $48.2M.",
+        "claims": [
+          {
+            "id": "c06b1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.91,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-c",
+        "answer": "Revenue $48.2M.",
+        "claims": [
+          {
+            "id": "c06c1",
+            "text": "Q4 revenue totalled $48.2 million",
+            "confidence": 0.89,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c06a1",
+          "c06b1",
+          "c06c1"
+        ],
+        [
+          "c06a2"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c06a1": "verified",
+        "c06a2": "verified",
+        "c06b1": "verified",
+        "c06c1": "verified"
+      },
+      "rejects": [],
+      "verdicts": [
+        "unanimous",
+        "single_source"
+      ]
+    }
+  },
+  {
+    "id": "07-broken-citation",
+    "note": "Cites a source id that does not exist in the corpus.",
+    "query": "What was free cash flow?",
+    "panel": [
+      "model-a",
+      "model-b"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Negative $3.1M.",
+        "claims": [
+          {
+            "id": "c07a1",
+            "text": "Free cash flow was negative $3.1 million in Q4",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "source_id": "s6",
+                "quote": "Free cash flow was negative $3.1 million in Q4"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Negative $3.1M.",
+        "claims": [
+          {
+            "id": "c07b1",
+            "text": "Q4 free cash flow was negative $3.1 million",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "source_id": "s9",
+                "quote": "Free cash flow was negative $3.1 million"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c07a1",
+          "c07b1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c07a1": "verified",
+        "c07b1": "broken"
+      },
+      "rejects": [],
+      "verdicts": [
+        "unanimous"
+      ]
+    }
+  },
+  {
+    "id": "08-fabricated-quote",
+    "note": "Real source id, quote that was never written. The confident hallucinated citation.",
+    "query": "What was Q4 revenue?",
+    "panel": [
+      "model-a",
+      "model-b"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "$48.2 million.",
+        "claims": [
+          {
+            "id": "c08a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "$48.2 million.",
+        "claims": [
+          {
+            "id": "c08b1",
+            "text": "Q4 revenue reached $48.2 million",
+            "confidence": 0.87,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "the board approved a dividend of $0.15 per share"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c08a1",
+          "c08b1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c08a1": "verified",
+        "c08b1": "unsupported"
+      },
+      "rejects": [],
+      "verdicts": [
+        "unanimous"
+      ]
+    }
+  },
+  {
+    "id": "09-panel-degraded",
+    "note": "Two of three models failed. One model is not a consensus.",
+    "query": "What was Q4 revenue?",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "$48.2 million.",
+        "claims": [
+          {
+            "id": "c09a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [
+      {
+        "model": "model-b",
+        "reason": "upstream timeout after 30s",
+        "stage": "invoke"
+      },
+      {
+        "model": "model-c",
+        "reason": "schema mismatch: 2 error(s)",
+        "stage": "validate"
+      }
+    ],
+    "expected": {
+      "clusters": [
+        [
+          "c09a1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "degraded",
+      "citations": {
+        "c09a1": "verified"
+      },
+      "rejects": [],
+      "verdicts": [
+        "single_source"
+      ]
+    }
+  },
+  {
+    "id": "10-low-confidence-conflict",
+    "note": "A contradiction neither model stands behind. Real, but not a headline disagreement.",
+    "query": "Did the logistics division grow?",
+    "panel": [
+      "model-a",
+      "model-b"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Probably, but unclear.",
+        "claims": [
+          {
+            "id": "c10a1",
+            "text": "The logistics division grew in Q4",
+            "confidence": 0.2,
+            "evidence": []
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Probably not, but unclear.",
+        "claims": [
+          {
+            "id": "c10b1",
+            "text": "The logistics division did not grow in Q4",
+            "confidence": 0.25,
+            "evidence": []
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c10a1",
+          "c10b1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "mixed",
+      "citations": {},
+      "rejects": [
+        "c10b1"
+      ],
+      "verdicts": [
+        "conditional"
+      ]
+    }
+  },
+  {
+    "id": "11-shared-vocabulary-distinct-claims",
+    "note": "Every claim says 'Q4'. Tests that the clusterer does not merge on surface overlap.",
+    "query": "Give me Northwind's Q4 headline numbers.",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Revenue $48.2M.",
+        "claims": [
+          {
+            "id": "c11a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Margin 8.4%.",
+        "claims": [
+          {
+            "id": "c11b1",
+            "text": "Q4 operating margin was 8.4%",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "source_id": "s2",
+                "quote": "Operating margin for the quarter was 8.4%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-c",
+        "answer": "Headcount 1,240.",
+        "claims": [
+          {
+            "id": "c11c1",
+            "text": "Q4 ending headcount was 1,240",
+            "confidence": 0.85,
+            "evidence": [
+              {
+                "source_id": "s4",
+                "quote": "Headcount fell to 1,240 at the end of Q4"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c11a1"
+        ],
+        [
+          "c11b1"
+        ],
+        [
+          "c11c1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c11a1": "verified",
+        "c11b1": "verified",
+        "c11c1": "verified"
+      },
+      "rejects": [],
+      "verdicts": [
+        "single_source",
+        "single_source",
+        "single_source"
+      ]
+    }
+  },
+  {
+    "id": "12-no-corpus-unverified",
+    "note": "Open-ended query with no corpus. Citations are model assertions and must be labelled so.",
+    "query": "Is Northwind a good acquisition target?",
+    "panel": [
+      "model-a",
+      "model-b"
+    ],
+    "corpus": {},
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Plausibly, on cash-flow grounds.",
+        "claims": [
+          {
+            "id": "c12a1",
+            "text": "Northwind is an attractive acquisition target",
+            "confidence": 0.5,
+            "evidence": [
+              {
+                "source_id": null,
+                "quote": "negative free cash flow limits standalone options"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Plausibly.",
+        "claims": [
+          {
+            "id": "c12b1",
+            "text": "Northwind is an appealing acquisition candidate",
+            "confidence": 0.45,
+            "evidence": [
+              {
+                "source_id": null,
+                "quote": "weak cash generation invites consolidation"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c12a1",
+          "c12b1"
+        ]
+      ],
+      "conflicts": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c12a1": "unverified",
+        "c12b1": "unverified"
+      },
+      "rejects": [],
+      "verdicts": [
+        "unanimous"
+      ]
+    }
+  },
+  {
+    "id": "13-majority-not-unanimous",
+    "note": "Two of three back the claim; the third never addresses it. Majority, not unanimity.",
+    "query": "Give me Northwind's Q4 position.",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Revenue $48.2M; FCF negative.",
+        "claims": [
+          {
+            "id": "c13a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          },
+          {
+            "id": "c13a2",
+            "text": "Free cash flow was negative $3.1 million in Q4",
+            "confidence": 0.8,
+            "evidence": [
+              {
+                "source_id": "s6",
+                "quote": "Free cash flow was negative $3.1 million in Q4"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Revenue $48.2M.",
+        "claims": [
+          {
+            "id": "c13b1",
+            "text": "Q4 revenue totalled $48.2 million",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-c",
+        "answer": "Margin 8.4%.",
+        "claims": [
+          {
+            "id": "c13c1",
+            "text": "Q4 operating margin was 8.4%",
+            "confidence": 0.87,
+            "evidence": [
+              {
+                "source_id": "s2",
+                "quote": "Operating margin for the quarter was 8.4%"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c13a1",
+          "c13b1"
+        ],
+        [
+          "c13a2"
+        ],
+        [
+          "c13c1"
+        ]
+      ],
+      "verdicts": [
+        "majority",
+        "single_source",
+        "single_source"
+      ],
+      "conflicts": [],
+      "rejects": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c13a1": "verified",
+        "c13a2": "verified",
+        "c13b1": "verified",
+        "c13c1": "verified"
+      }
+    }
+  },
+  {
+    "id": "14-partial-coverage-majorities",
+    "note": "Each model covers two of three sub-questions. Every claim is 2-of-3: majority throughout.",
+    "query": "Summarise Northwind's Q4 revenue, margin and headcount.",
+    "panel": [
+      "model-a",
+      "model-b",
+      "model-c"
+    ],
+    "responses": [
+      {
+        "model": "model-a",
+        "answer": "Revenue $48.2M, margin 8.4%.",
+        "claims": [
+          {
+            "id": "c14a1",
+            "text": "Q4 revenue was $48.2 million",
+            "confidence": 0.92,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          },
+          {
+            "id": "c14a2",
+            "text": "Operating margin in Q4 was 8.4%",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s2",
+                "quote": "Operating margin for the quarter was 8.4%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-b",
+        "answer": "Revenue $48.2M, headcount 1,240.",
+        "claims": [
+          {
+            "id": "c14b1",
+            "text": "Fourth-quarter revenue totalled $48.2 million",
+            "confidence": 0.9,
+            "evidence": [
+              {
+                "source_id": "s1",
+                "quote": "Q4 revenue of $48.2 million"
+              }
+            ]
+          },
+          {
+            "id": "c14b2",
+            "text": "Headcount at the end of Q4 was 1,240",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "source_id": "s4",
+                "quote": "Headcount fell to 1,240 at the end of Q4"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "model": "model-c",
+        "answer": "Margin 8.4%, headcount 1,240.",
+        "claims": [
+          {
+            "id": "c14c1",
+            "text": "The quarter's operating margin came to 8.4%",
+            "confidence": 0.88,
+            "evidence": [
+              {
+                "source_id": "s2",
+                "quote": "Operating margin for the quarter was 8.4%"
+              }
+            ]
+          },
+          {
+            "id": "c14c2",
+            "text": "Closing Q4 headcount stood at 1,240",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "source_id": "s4",
+                "quote": "Headcount fell to 1,240 at the end of Q4"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "expected": {
+      "clusters": [
+        [
+          "c14a1",
+          "c14b1"
+        ],
+        [
+          "c14a2",
+          "c14c1"
+        ],
+        [
+          "c14b2",
+          "c14c2"
+        ]
+      ],
+      "verdicts": [
+        "majority",
+        "majority",
+        "majority"
+      ],
+      "conflicts": [],
+      "rejects": [],
+      "trust_status": "mixed",
+      "citations": {
+        "c14a1": "verified",
+        "c14a2": "verified",
+        "c14b1": "verified",
+        "c14b2": "verified",
+        "c14c1": "verified",
+        "c14c2": "verified"
+      }
+    }
+  }
+]

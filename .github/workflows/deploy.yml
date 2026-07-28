@@ -15,6 +15,15 @@ jobs:
       - name: Build images
         run: docker compose build
 
+      # Gate the deploy on the trust eval. It replays a recorded tape, so it
+      # needs no API keys and makes no network calls — a regression in the
+      # consensus logic stops the deploy rather than reaching the site.
+      - name: Multi-model trust eval
+        run: |
+          docker run --rm -v "$PWD/multi_model_trust:/work/multi_model_trust:ro" \
+            -w /work ai-workforce-worker:latest \
+            python -m multi_model_trust.eval.eval_harness
+
       - name: Deploy
         run: docker compose up -d
 

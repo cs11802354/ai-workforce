@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { IconAgents, IconChart, IconChat, IconHome } from "../components/Icon";
+import { IconAgents, IconChart, IconChat, IconHome, IconScales } from "../components/Icon";
 
 const items = [
   { to: "/", label: "Home", Icon: IconHome, end: true },
   { to: "/agents", label: "Agents", Icon: IconAgents },
   { to: "/chat", label: "Chat", Icon: IconChat },
   { to: "/analytics", label: "Analytics", Icon: IconChart },
+  { to: "/trust", label: "Trust Panel", Icon: IconScales },
 ];
 
 export function Sidebar({ collapsed }: { collapsed: boolean }) {
@@ -16,7 +17,7 @@ export function Sidebar({ collapsed }: { collapsed: boolean }) {
           <div className="brand-mark">M</div>
           {!collapsed && (
             <div className="brand-text">
-              <span className="brand-name">ManLab</span>
+              <span className="brand-name">MK Labs</span>
               <span className="brand-sub">Agent platform</span>
             </div>
           )}
