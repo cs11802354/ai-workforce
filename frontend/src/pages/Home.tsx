@@ -51,10 +51,13 @@ export function Home() {
     navigate("/agents/new", { state: { initialDescription: query.trim() } });
   }
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
   return (
     <div className="page">
       <div className="hero">
-        <h1 className="page-title">Good morning</h1>
+        <h1 className="page-title">{greeting}</h1>
         <p className="page-subtitle">What would you like to build?</p>
 
         <form className="hero-search-form" onSubmit={handleSearchSubmit}>
