@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { avatarStyle, tint } from "../lib/colors";
+import { IconAgents, IconCube, IconLayers, IconPlus } from "../components/Icon";
 import type { Agent } from "../types";
 
 export function Agents() {
@@ -30,7 +31,7 @@ export function Agents() {
           <h1 className="page-title">Agents</h1>
           <p className="page-subtitle">{agents.length} managed</p>
         </div>
-        <Link to="/agents/new" className="btn btn-primary">+ New agent</Link>
+        <Link to="/agents/new" className="btn btn-primary"><IconPlus size={15} /> New agent</Link>
       </div>
 
       {loading ? (
@@ -42,21 +43,21 @@ export function Agents() {
       ) : (
         <div className="stat-grid">
           <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#6366F1")}>◆</div>
+            <div className="stat-icon" style={tint("#6366F1")}><IconAgents size={18} /></div>
             <div>
               <div className="stat-value">{agents.length}</div>
               <div className="stat-label">Total agents</div>
             </div>
           </div>
           <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#3B82F6")}>⬡</div>
+            <div className="stat-icon" style={tint("#3B82F6")}><IconCube size={18} /></div>
             <div>
               <div className="stat-value">{providerCount}</div>
               <div className="stat-label">Providers in use</div>
             </div>
           </div>
           <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#14B8A6")}>✦</div>
+            <div className="stat-icon" style={tint("#14B8A6")}><IconLayers size={18} /></div>
             <div>
               <div className="stat-value">{toolCount}</div>
               <div className="stat-label">Distinct tools</div>
