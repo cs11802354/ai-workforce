@@ -10,8 +10,8 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <div className="brand-mark">A</div>
-        <span>Agent Platform</span>
+        <div className="brand-mark">M</div>
+        <span>ManLab</span>
       </div>
       <nav className="sidebar-nav">
         {items.map((item) => (
