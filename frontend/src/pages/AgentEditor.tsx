@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/client";
 import type { Agent, Tool } from "../types";
 
@@ -8,13 +8,21 @@ const PROVIDER_MODELS: Record<string, string[]> = {
   openai: ["gpt-5", "gpt-5-mini"],
 };
 
+const PROVIDERS: { id: "anthropic" | "openai"; icon: string; title: string; desc: string }[] = [
+  { id: "anthropic", icon: "✦", title: "Claude", desc: "Anthropic's models — strong reasoning and long context." },
+  { id: "openai", icon: "⬡", title: "OpenAI", desc: "GPT models — fast, broad general-purpose coverage." },
+];
+
 export function AgentEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEdit = Boolean(id);
 
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(
+    (location.state as { initialDescription?: string } | null)?.initialDescription || ""
+  );
   const [provider, setProvider] = useState<"anthropic" | "openai">("anthropic");
   const [model, setModel] = useState(PROVIDER_MODELS.anthropic[0]);
   const [tools, setTools] = useState<string[]>([]);
@@ -72,13 +80,18 @@ export function AgentEditor() {
 
       <div className="form-section">
         <div className="form-section-label">IDENTITY</div>
-        <label className="form-label">Name your agent</label>
-        <input
-          className="input"
-          placeholder="e.g. Support Triage Assistant"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        <div className="form-row" style={{ alignItems: "flex-start" }}>
+          <div className="icon-box">✦</div>
+          <div style={{ flex: 1 }}>
+            <label className="form-label">Name your agent</label>
+            <input
+              className="input"
+              placeholder="e.g. Support Triage Assistant"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="form-section">
@@ -93,25 +106,30 @@ export function AgentEditor() {
 
       <div className="form-section">
         <div className="form-section-label">MODEL</div>
-        <div className="form-row">
-          <select
-            className="input"
-            value={provider}
-            onChange={(e) => {
-              const next = e.target.value as "anthropic" | "openai";
-              setProvider(next);
-              setModel(PROVIDER_MODELS[next][0]);
-            }}
-          >
-            <option value="anthropic">Claude (Anthropic)</option>
-            <option value="openai">OpenAI</option>
-          </select>
-          <select className="input" value={model} onChange={(e) => setModel(e.target.value)}>
-            {PROVIDER_MODELS[provider].map((m) => (
-              <option key={m} value={m}>{m}</option>
-            ))}
-          </select>
+        <div className="option-grid">
+          {PROVIDERS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={"option-card" + (provider === p.id ? " selected" : "")}
+              onClick={() => {
+                setProvider(p.id);
+                setModel(PROVIDER_MODELS[p.id][0]);
+              }}
+            >
+              <span className="option-card-icon">{p.icon}</span>
+              <span>
+                <div className="option-card-title">{p.title}</div>
+                <div className="option-card-desc">{p.desc}</div>
+              </span>
+            </button>
+          ))}
         </div>
+        <select className="input" style={{ marginTop: 10 }} value={model} onChange={(e) => setModel(e.target.value)}>
+          {PROVIDER_MODELS[provider].map((m) => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
       </div>
 
       <div className="form-section">
