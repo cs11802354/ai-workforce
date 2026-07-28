@@ -1,10 +1,12 @@
+import time
 import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from temporalio.client import WithStartWorkflowOperation
-from temporalio.common import WorkflowIDConflictPolicy
+from temporalio.client import WorkflowExecutionStatus
+from temporalio.common import WorkflowIDConflictPolicy, WorkflowIDReusePolicy
 
 from app.config import settings
 from app.db import get_db
@@ -32,6 +34,51 @@ def _agent_snapshot(agent: Agent) -> dict:
         "skills": agent.skills or [],
         "tools": agent.tools or [],
     }
+
+
+def _history_for(conversation: Conversation) -> list[dict]:
+    """Replay history for a workflow that has to be (re)started.
+
+    A conversation workflow holds its message list in workflow state, so when it
+    idles out that state is gone — Postgres is the durable copy. Only user and
+    assistant text is replayed: tool_use/tool_result block pairs belong to a
+    completed turn and are not needed to start the next one, and reconstructing
+    them from flattened rows would risk an id mismatch the provider rejects.
+    """
+    return [
+        {"role": m.role, "content": m.content}
+        for m in conversation.messages
+        if m.role in ("user", "assistant") and m.content
+    ]
+
+
+async def _live_workflow_id(client, conversation: Conversation, db: Session) -> str:
+    """Return a workflow id that Update-with-Start can actually use.
+
+    A closed workflow id cannot be revived: the server rejects the update with
+    "workflow execution already completed", and no id-reuse policy changes that
+    (verified directly against the server). So the conversation keeps its logical
+    identity in Postgres and the workflow id rolls forward whenever the previous
+    run has closed — idled out, terminated, or failed. The replayed history keeps
+    the new run's context intact.
+    """
+    workflow_id = conversation.temporal_workflow_id
+    try:
+        description = await client.get_workflow_handle(workflow_id).describe()
+        closed = (
+            description.status is not None
+            and description.status != WorkflowExecutionStatus.RUNNING
+        )
+    except Exception:
+        # No such workflow yet — the id is free.
+        closed = False
+
+    if closed:
+        workflow_id = f"conv-{conversation.id}-{int(time.time())}"
+        conversation.temporal_workflow_id = workflow_id
+        db.commit()
+
+    return workflow_id
 
 
 @router.get("/conversations", response_model=list[ConversationOut])
@@ -129,12 +176,19 @@ async def send_message(
     db.refresh(run)
 
     client = await get_temporal_client()
+    workflow_id = await _live_workflow_id(client, conversation, db)
+    run.temporal_workflow_id = workflow_id
     start_op = WithStartWorkflowOperation(
         "AgentConversationWorkflow",
-        args=[_agent_snapshot(agent), []],
-        id=conversation.temporal_workflow_id,
+        args=[_agent_snapshot(agent), _history_for(conversation)],
+        id=workflow_id,
         task_queue=settings.temporal_task_queue,
+        # USE_EXISTING attaches to a live workflow; ALLOW_DUPLICATE lets a fresh
+        # run take the same id once the previous one has closed. Without the
+        # reuse policy, a conversation whose workflow idled out could never be
+        # resumed — it failed with "workflow execution already completed".
         id_conflict_policy=WorkflowIDConflictPolicy.USE_EXISTING,
+        id_reuse_policy=WorkflowIDReusePolicy.ALLOW_DUPLICATE,
     )
 
     try:
@@ -151,9 +205,16 @@ async def send_message(
         # row stays — a failed execution still belongs in the log.
         db.delete(user_message)
         db.commit()
-        # A failed update wraps the real activity error in `cause`; without
-        # unwrapping it the UI only ever sees "Workflow update failed".
-        detail = str(getattr(exc, "cause", None) or exc)
+        # The real provider error is buried a few levels down: the update error
+        # wraps an ActivityError which wraps the ApplicationError carrying the
+        # message. Walk to the innermost cause, otherwise the UI shows a useless
+        # "Activity task failed" instead of e.g. a billing or rate-limit reason.
+        innermost = exc
+        seen = 0
+        while getattr(innermost, "cause", None) is not None and seen < 6:
+            innermost = innermost.cause
+            seen += 1
+        detail = str(innermost) or str(exc)
         raise HTTPException(502, f"Agent turn failed: {detail}") from exc
 
     handle = await start_op.workflow_handle()
