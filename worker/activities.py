@@ -11,6 +11,20 @@ from catalog import SKILL_PROMPTS, TOOL_DISPLAY_NAMES, anthropic_tools, openai_t
 
 MAX_TOKENS = 16000
 
+# Appended to every agent's system prompt. Without it models pad answers with
+# alternatives nobody asked for — a "not connected" tool reply came back with a
+# bulleted list of other websites to try. Guardrails belong in the transpiler so
+# every agent inherits them rather than each one re-specifying tone.
+HOUSE_STYLE = """How to respond:
+- Lead with the answer. Put the result in the first sentence.
+- Be brief. Two or three sentences is usually right; expand only when the user \
+asks for depth or the task genuinely needs it.
+- Do not pad. Skip preambles, restatements of the question, disclaimers, and \
+unrequested alternatives or next steps.
+- If you cannot do something, say so in one sentence and stop. Do not suggest \
+other websites, tools, or workarounds unless asked.
+- Never invent data. If a tool returns no data, report that plainly."""
+
 
 def build_system_prompt(agent: dict) -> str:
     """Fold the agent's role and its skills into the run-state context the model
@@ -35,6 +49,7 @@ def build_system_prompt(agent: dict) -> str:
             "it is not connected, say so plainly rather than inventing a number."
         )
 
+    parts.append(HOUSE_STYLE)
     return "\n\n".join(parts)
 
 

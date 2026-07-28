@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/client";
 import { IconCube, IconSparkle } from "../components/Icon";
+import { ToolLogo } from "../components/ToolLogo";
 import type { Agent, Skill, Tool } from "../types";
 
 const PROVIDER_MODELS: Record<string, string[]> = {
@@ -202,8 +203,8 @@ export function AgentEditor() {
         </p>
         <div className="tool-grid">
           {availableTools.map((tool) => (
-            <div key={tool.id} className="tool-check disabled" aria-disabled="true">
-              <input type="checkbox" checked={false} disabled readOnly />
+            <div key={tool.id} className="tool-check tool-card disabled" aria-disabled="true">
+              <ToolLogo id={tool.id} />
               <div>
                 <div className="tool-name">{tool.name}</div>
                 <div className="tool-desc">{tool.description}</div>
