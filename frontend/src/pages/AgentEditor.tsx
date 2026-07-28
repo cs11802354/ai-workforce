@@ -1,0 +1,151 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../api/client";
+import type { Agent, Tool } from "../types";
+
+const PROVIDER_MODELS: Record<string, string[]> = {
+  anthropic: ["claude-sonnet-5", "claude-opus-5", "claude-haiku-4-5"],
+  openai: ["gpt-5", "gpt-5-mini"],
+};
+
+export function AgentEditor() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEdit = Boolean(id);
+
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [provider, setProvider] = useState<"anthropic" | "openai">("anthropic");
+  const [model, setModel] = useState(PROVIDER_MODELS.anthropic[0]);
+  const [tools, setTools] = useState<string[]>([]);
+  const [availableTools, setAvailableTools] = useState<Tool[]>([]);
+  const [knowledgeFileName, setKnowledgeFileName] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    api.listTools().then(setAvailableTools).catch(() => {});
+    if (id) {
+      api.getAgent(id).then((agent: Agent) => {
+        setName(agent.name);
+        setDescription(agent.description);
+        setProvider(agent.provider);
+        setModel(agent.model);
+        setTools(agent.tools);
+        setKnowledgeFileName(agent.knowledge_file_name);
+      });
+    }
+  }, [id]);
+
+  function toggleTool(toolId: string) {
+    setTools((prev) =>
+      prev.includes(toolId) ? prev.filter((t) => t !== toolId) : [...prev, toolId]
+    );
+  }
+
+  async function handleSave() {
+    if (!name.trim()) return;
+    setSaving(true);
+    try {
+      const payload = { name, description, provider, model, tools };
+      const agent = isEdit ? await api.updateAgent(id!, payload) : await api.createAgent(payload);
+      if (pendingFile) {
+        await api.uploadKnowledgeFile(agent.id, pendingFile);
+      }
+      navigate("/agents");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="page page-narrow">
+      <div className="page-header-row">
+        <div>
+          <h1 className="page-title">{isEdit ? "Edit agent" : "New agent"}</h1>
+          <p className="page-subtitle">Type into any field to build your agent.</p>
+        </div>
+        <button className="btn btn-primary" onClick={handleSave} disabled={saving || !name.trim()}>
+          {saving ? "Saving…" : isEdit ? "Save agent" : "Create agent"}
+        </button>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-label">IDENTITY</div>
+        <label className="form-label">Name your agent</label>
+        <input
+          className="input"
+          placeholder="e.g. Support Triage Assistant"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-label">ROLE &amp; OBJECTIVES</div>
+        <textarea
+          className="input textarea"
+          placeholder="Describe what this agent is responsible for…"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-label">MODEL</div>
+        <div className="form-row">
+          <select
+            className="input"
+            value={provider}
+            onChange={(e) => {
+              const next = e.target.value as "anthropic" | "openai";
+              setProvider(next);
+              setModel(PROVIDER_MODELS[next][0]);
+            }}
+          >
+            <option value="anthropic">Claude (Anthropic)</option>
+            <option value="openai">OpenAI</option>
+          </select>
+          <select className="input" value={model} onChange={(e) => setModel(e.target.value)}>
+            {PROVIDER_MODELS[provider].map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-label">SKILLS</div>
+        <div className="tool-grid">
+          {availableTools.map((tool) => (
+            <label key={tool.id} className={"tool-check" + (tools.includes(tool.id) ? " checked" : "")}>
+              <input
+                type="checkbox"
+                checked={tools.includes(tool.id)}
+                onChange={() => toggleTool(tool.id)}
+              />
+              <div>
+                <div className="tool-name">{tool.name}</div>
+                <div className="tool-desc">{tool.description}</div>
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-label">KNOWLEDGE &amp; FILES</div>
+        <div className="file-drop">
+          <input
+            type="file"
+            id="knowledge-file"
+            onChange={(e) => setPendingFile(e.target.files?.[0] ?? null)}
+          />
+          <label htmlFor="knowledge-file">
+            {pendingFile?.name || knowledgeFileName || "Choose a file to attach"}
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+}
