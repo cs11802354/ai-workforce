@@ -1,3 +1,4 @@
+import { IconBell, IconMoon, IconSearch, IconSun } from "../components/Icon";
 import { useTheme } from "../lib/theme";
 
 export function Topbar() {
@@ -6,13 +7,13 @@ export function Topbar() {
   return (
     <header className="topbar">
       <div className="topbar-search">
-        <span>⌕</span>
+        <IconSearch size={15} />
         <span>Search…</span>
         <kbd>⌘K</kbd>
       </div>
       <div className="topbar-actions">
         <button className="icon-btn" aria-label="Notifications" title="Notifications">
-          🔔
+          <IconBell size={16} />
           <span className="notif-dot" />
         </button>
         <button
@@ -21,7 +22,7 @@ export function Topbar() {
           aria-label="Toggle theme"
           title="Toggle theme"
         >
-          {theme === "dark" ? "☀" : "☾"}
+          {theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />}
         </button>
       </div>
     </header>

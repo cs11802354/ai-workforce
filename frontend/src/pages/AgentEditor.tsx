@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/client";
+import { IconCube, IconSparkle } from "../components/Icon";
 import type { Agent, Tool } from "../types";
 
 const PROVIDER_MODELS: Record<string, string[]> = {
@@ -8,9 +9,9 @@ const PROVIDER_MODELS: Record<string, string[]> = {
   openai: ["gpt-5", "gpt-5-mini"],
 };
 
-const PROVIDERS: { id: "anthropic" | "openai"; icon: string; title: string; desc: string }[] = [
-  { id: "anthropic", icon: "✦", title: "Claude", desc: "Anthropic's models — strong reasoning and long context." },
-  { id: "openai", icon: "⬡", title: "OpenAI", desc: "GPT models — fast, broad general-purpose coverage." },
+const PROVIDERS: { id: "anthropic" | "openai"; Icon: typeof IconSparkle; title: string; desc: string }[] = [
+  { id: "anthropic", Icon: IconSparkle, title: "Claude", desc: "Anthropic's models — strong reasoning and long context." },
+  { id: "openai", Icon: IconCube, title: "OpenAI", desc: "GPT models — fast, broad general-purpose coverage." },
 ];
 
 export function AgentEditor() {
@@ -68,10 +69,12 @@ export function AgentEditor() {
 
   return (
     <div className="page page-narrow">
-      <div className="page-header-row">
+      <div className="editor-head">
         <div>
           <h1 className="page-title">{isEdit ? "Edit agent" : "New agent"}</h1>
-          <p className="page-subtitle">Type into any field to build your agent.</p>
+          <p className="page-subtitle" style={{ marginBottom: 0 }}>
+            Type into any field to build your agent.
+          </p>
         </div>
         <button className="btn btn-primary" onClick={handleSave} disabled={saving || !name.trim()}>
           {saving ? "Saving…" : isEdit ? "Save agent" : "Create agent"}
@@ -81,7 +84,7 @@ export function AgentEditor() {
       <div className="form-section">
         <div className="form-section-label">IDENTITY</div>
         <div className="form-row" style={{ alignItems: "flex-start" }}>
-          <div className="icon-box">✦</div>
+          <div className="icon-box"><IconSparkle size={19} /></div>
           <div style={{ flex: 1 }}>
             <label className="form-label">Name your agent</label>
             <input
@@ -117,7 +120,7 @@ export function AgentEditor() {
                 setModel(PROVIDER_MODELS[p.id][0]);
               }}
             >
-              <span className="option-card-icon">{p.icon}</span>
+              <span className="option-card-icon"><p.Icon size={18} /></span>
               <span>
                 <div className="option-card-title">{p.title}</div>
                 <div className="option-card-desc">{p.desc}</div>

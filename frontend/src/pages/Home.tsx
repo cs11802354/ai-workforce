@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { api } from "../api/client";
 import { avatarStyle, tint } from "../lib/colors";
 import { formatDuration } from "../lib/format";
+import { IconAgents, IconArrowUp, IconBolt, IconCheck, IconClock, IconPlus, IconRuns, IconSparkle, IconStar, IconX } from "../components/Icon";
 import type { Agent, Run } from "../types";
 
 export function Home() {
@@ -62,20 +63,20 @@ export function Home() {
 
         <form className="hero-search-form" onSubmit={handleSearchSubmit}>
           <div className="hero-search">
-            <span className="hero-search-icon">✦</span>
+            <span className="hero-search-icon"><IconSparkle size={17} /></span>
             <input
               placeholder="Describe an agent, or search your agents…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <button type="submit" className="hero-search-submit" aria-label="Go">↑</button>
+            <button type="submit" className="hero-search-submit" aria-label="Go"><IconArrowUp size={16} /></button>
           </div>
         </form>
 
         <div className="hero-chips">
-          <Link to="/agents/new" className="chip">+ Build a new agent</Link>
-          <Link to="/runs" className="chip">▶ Run an agent</Link>
-          <Link to="/agents" className="chip">⚙ View all agents</Link>
+          <Link to="/agents/new" className="chip"><IconPlus size={14} /> Build a new agent</Link>
+          <Link to="/runs" className="chip"><IconRuns size={14} /> Run an agent</Link>
+          <Link to="/agents" className="chip"><IconAgents size={14} /> View all agents</Link>
         </div>
       </div>
 
@@ -88,21 +89,21 @@ export function Home() {
       ) : (
         <div className="stat-grid">
           <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#6366F1")}>⚙</div>
+            <div className="stat-icon" style={tint("#6366F1")}><IconAgents size={18} /></div>
             <div>
               <div className="stat-value">{agents.length}</div>
               <div className="stat-label">Agents</div>
             </div>
           </div>
           <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#0EA5E9")}>▶</div>
+            <div className="stat-icon" style={tint("#0EA5E9")}><IconRuns size={18} /></div>
             <div>
               <div className="stat-value">{runs.length}</div>
               <div className="stat-label">Runs total</div>
             </div>
           </div>
           <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#14B8A6")}>⚡</div>
+            <div className="stat-icon" style={tint("#14B8A6")}><IconBolt size={18} /></div>
             <div>
               <div className="stat-value">{runsToday}</div>
               <div className="stat-label">Runs today</div>
@@ -125,28 +126,28 @@ export function Home() {
         ) : (
           <div className="stat-grid">
             <div className="stat-card-item">
-              <div className="stat-icon" style={tint("#17a76b")}>✓</div>
+              <div className="stat-icon" style={tint("#17a76b")}><IconCheck size={18} /></div>
               <div>
                 <div className="stat-value">{successRate === null ? "—" : `${successRate}%`}</div>
                 <div className="stat-label">Success rate</div>
               </div>
             </div>
             <div className="stat-card-item">
-              <div className="stat-icon" style={tint("#e0454f")}>✕</div>
+              <div className="stat-icon" style={tint("#e0454f")}><IconX size={18} /></div>
               <div>
                 <div className="stat-value">{failedRuns.length}</div>
                 <div className="stat-label">Failed runs</div>
               </div>
             </div>
             <div className="stat-card-item">
-              <div className="stat-icon" style={tint("#6366F1")}>★</div>
+              <div className="stat-icon" style={tint("#6366F1")}><IconStar size={18} /></div>
               <div>
                 <div className="stat-value stat-value-sm">{mostActiveAgentName}</div>
                 <div className="stat-label">Most active agent</div>
               </div>
             </div>
             <div className="stat-card-item">
-              <div className="stat-icon" style={tint("#0EA5E9")}>◷</div>
+              <div className="stat-icon" style={tint("#0EA5E9")}><IconClock size={18} /></div>
               <div>
                 <div className="stat-value">{avgDurationMs === null ? "—" : formatDuration(avgDurationMs)}</div>
                 <div className="stat-label">Avg run duration</div>
