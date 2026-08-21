@@ -1031,7 +1031,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 12px 14px;
   border-top: 1px solid var(--border);
 }
-.chat-composer .input { resize: none; min-height: 42px; max-height: 160px; }
+.chat-composer .input { resize: none; min-height: 42px; max-height: 160px; overflow-y: auto; }
 
 @media (max-width: 900px) {
   .chat { grid-template-columns: 1fr; height: calc(100vh - 120px); }
