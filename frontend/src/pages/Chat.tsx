@@ -20,6 +20,7 @@ export function Chat() {
   const [loading, setLoading] = useState(true);
   const [railOpen, setRailOpen] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+  const draftRef = useRef<HTMLTextAreaElement>(null);
 
   const agentById = new Map(agents.map((a) => [a.id, a]));
   const active = conversations.find((c) => c.id === activeId) || null;
@@ -42,6 +43,16 @@ export function Chat() {
       setMessages([]);
     });
   }, [searchParams, setSearchParams]);
+
+  // rows={1} plus a fixed CSS height means long/multi-line drafts would
+  // overflow upward into the message list instead of growing the box. Grow it
+  // to fit the content, capped by the CSS max-height (which then scrolls).
+  useEffect(() => {
+    const el = draftRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [draft]);
 
   useEffect(() => {
     if (!activeId) return;
@@ -242,6 +253,7 @@ export function Chat() {
 
         <form className="chat-composer" onSubmit={handleSend}>
           <textarea
+            ref={draftRef}
             className="input"
             rows={1}
             placeholder={activeId ? "Send a message…" : "Start a conversation first"}
