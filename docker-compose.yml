@@ -81,6 +81,9 @@ services:
       TRUST_PANEL_TIER: ${TRUST_PANEL_TIER:-economy}
       ARTIFACT_SERVICE_URL: ${ARTIFACT_SERVICE_URL}
       ARTIFACT_API_KEY: ${ARTIFACT_API_KEY}
+    networks:
+      - default
+      - agent-net
 
   frontend:
     build:
@@ -95,3 +98,9 @@ services:
 volumes:
   postgres_data:
   knowledge_data:
+
+networks:
+  # Shared with the artifact-service deployment so the worker can reach it by
+  # container name. Created once on the host with `docker network create agent-net`.
+  agent-net:
+    external: true
