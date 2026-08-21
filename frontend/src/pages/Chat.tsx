@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
-import { Badge } from "../components/Badge";
 import { buttonClass } from "../components/Button";
 import { IconArrowUp, IconPlus, IconX } from "../components/Icon";
 import { Markdown } from "../components/Markdown";
@@ -227,12 +226,10 @@ export function Chat() {
           )}
 
           {messages.map((m) =>
-            m.role === "tool" ? (
-              <div key={m.id} className="chat-tool">
-                <Badge muted>used {m.tool_name}</Badge>
-                <span className="chat-tool-output">{m.content}</span>
-              </div>
-            ) : (
+            // Tool-call trace (e.g. "used artifact_generator") is hidden for
+            // now — the assistant's reply already surfaces what matters (the
+            // artifact link), so the raw trace is just noise in the thread.
+            m.role === "tool" ? null : (
               <div key={m.id} className={`chat-bubble chat-${m.role}`}>
                 {m.role === "assistant" ? <Markdown content={m.content} /> : m.content}
               </div>
