@@ -24,6 +24,31 @@ _TICKER = {
     "required": ["query"],
 }
 
+_ARTIFACT_SPEC = {
+    "type": "object",
+    "properties": {
+        "title": {"type": "string", "description": "Document title."},
+        "format": {
+            "type": "string",
+            "enum": ["html", "markdown", "pdf", "docx", "pptx"],
+            "description": "Output format. Only html and markdown render live today.",
+        },
+        "sections": {
+            "type": "array",
+            "description": "Ordered document sections.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "heading": {"type": "string"},
+                    "content": {"type": "string"},
+                },
+                "required": ["heading", "content"],
+            },
+        },
+    },
+    "required": ["title", "format", "sections"],
+}
+
 TOOL_SCHEMAS = {
     "bloomberg": {
         "name": "bloomberg",
@@ -65,6 +90,15 @@ TOOL_SCHEMAS = {
         "description": "Look up SEC filings (10-K, 10-Q, 8-K, S-1) for a company.",
         "input_schema": _TICKER,
     },
+    "artifact_generator": {
+        "name": "artifact_generator",
+        "description": (
+            "Generate a document (HTML or Markdown) from a title and sections, "
+            "store it, and return a stable URL. PDF/DOCX/PPTX are accepted but "
+            "not yet connected."
+        ),
+        "input_schema": _ARTIFACT_SPEC,
+    },
 }
 
 TOOL_DISPLAY_NAMES = {
@@ -76,6 +110,7 @@ TOOL_DISPLAY_NAMES = {
     "morningstar": "Morningstar Direct",
     "aladdin": "BlackRock Aladdin",
     "sec_edgar": "SEC EDGAR",
+    "artifact_generator": "Artifact Generator",
 }
 
 
