@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/client";
+import { Button } from "../components/Button";
 import { IconCube, IconSparkle } from "../components/Icon";
 import { ToolLogo } from "../components/ToolLogo";
 import type { Agent, Skill, Tool } from "../types";
@@ -89,9 +90,9 @@ export function AgentEditor() {
             Name, role and model are required.
           </p>
         </div>
-        <button className="btn btn-primary" onClick={handleSave} disabled={saving || !canSave}>
+        <Button variant="primary" onClick={handleSave} disabled={saving || !canSave}>
           {saving ? "Saving…" : isEdit ? "Save agent" : "Create agent"}
-        </button>
+        </Button>
       </div>
 
       {error && <div className="chat-error" style={{ marginBottom: 16 }}>{error}</div>}

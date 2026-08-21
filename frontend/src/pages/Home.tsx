@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../api/client";
-import { avatarStyle, tint } from "../lib/colors";
+import { avatarStyle } from "../lib/colors";
+import { Badge } from "../components/Badge";
 import { IconAgents, IconArrowUp, IconBolt, IconChat, IconPlus, IconRuns, IconSparkle } from "../components/Icon";
+import { StatCard, StatGrid } from "../components/Card";
 import type { Agent, Run } from "../types";
 
 export function Home() {
@@ -59,37 +61,11 @@ export function Home() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="stat-grid">
-          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-        </div>
-      ) : (
-        <div className="stat-grid">
-          <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#6366F1")}><IconAgents size={18} /></div>
-            <div>
-              <div className="stat-value">{agents.length}</div>
-              <div className="stat-label">Agents</div>
-            </div>
-          </div>
-          <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#0EA5E9")}><IconRuns size={18} /></div>
-            <div>
-              <div className="stat-value">{runs.length}</div>
-              <div className="stat-label">Runs total</div>
-            </div>
-          </div>
-          <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#14B8A6")}><IconBolt size={18} /></div>
-            <div>
-              <div className="stat-value">{runsToday}</div>
-              <div className="stat-label">Runs today</div>
-            </div>
-          </div>
-        </div>
-      )}
+      <StatGrid loading={loading}>
+        <StatCard icon={IconAgents} hue="#6366F1" value={agents.length} label="Agents" />
+        <StatCard icon={IconRuns} hue="#0EA5E9" value={runs.length} label="Runs total" />
+        <StatCard icon={IconBolt} hue="#14B8A6" value={runsToday} label="Runs today" />
+      </StatGrid>
 
       <div className="section">
         <div className="section-header">
@@ -115,10 +91,9 @@ export function Home() {
                   </span>
                 )}
                 <span className="list-row-main">{run.input_message}</span>
-                <span className={`badge status-${run.status}`}>
-                  <span className="badge-dot" />
+                <Badge status={run.status} dot>
                   {run.status}
-                </span>
+                </Badge>
               </div>
             );
           })}
