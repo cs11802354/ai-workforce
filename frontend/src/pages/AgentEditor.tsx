@@ -6,6 +6,10 @@ import { IconCube, IconSparkle } from "../components/Icon";
 import { ToolLogo } from "../components/ToolLogo";
 import type { Agent, Skill, Tool } from "../types";
 
+// Every other tool's adapter is still a stub; artifact_generator is the one
+// with a live backend, so it's the only tool card that's actually clickable.
+const INTERACTIVE_TOOL_IDS = new Set(["artifact_generator"]);
+
 const PROVIDER_MODELS: Record<string, string[]> = {
   anthropic: ["claude-opus-5", "claude-sonnet-5", "claude-haiku-4-5"],
   openai: ["gpt-5", "gpt-5-mini"],
@@ -61,6 +65,12 @@ export function AgentEditor() {
   function toggleSkill(skillId: string) {
     setSkills((prev) =>
       prev.includes(skillId) ? prev.filter((s) => s !== skillId) : [...prev, skillId]
+    );
+  }
+
+  function toggleTool(toolId: string) {
+    setTools((prev) =>
+      prev.includes(toolId) ? prev.filter((t) => t !== toolId) : [...prev, toolId]
     );
   }
 
@@ -196,22 +206,40 @@ export function AgentEditor() {
 
       <div className="form-section">
         <div className="form-section-label">
-          Tools <span className="soon">Demo — not connected</span>
+          Tools <span className="soon">Most are demo — not connected</span>
         </div>
         <p className="section-hint">
-          Data sources the agent can call. The dispatch path is live; the adapters
-          are stubs, so these stay disabled for now.
+          Data sources the agent can call. Artifact Generator has a live adapter,
+          so it's enabled for testing; the rest are stubs and stay disabled for now.
         </p>
         <div className="tool-grid">
-          {availableTools.map((tool) => (
-            <div key={tool.id} className="tool-check tool-card disabled" aria-disabled="true">
-              <ToolLogo id={tool.id} />
-              <div>
-                <div className="tool-name">{tool.name}</div>
-                <div className="tool-desc">{tool.description}</div>
+          {availableTools.map((tool) =>
+            INTERACTIVE_TOOL_IDS.has(tool.id) ? (
+              <label
+                key={tool.id}
+                className={"tool-check tool-card" + (tools.includes(tool.id) ? " checked" : "")}
+              >
+                <input
+                  type="checkbox"
+                  checked={tools.includes(tool.id)}
+                  onChange={() => toggleTool(tool.id)}
+                />
+                <ToolLogo id={tool.id} />
+                <div>
+                  <div className="tool-name">{tool.name}</div>
+                  <div className="tool-desc">{tool.description}</div>
+                </div>
+              </label>
+            ) : (
+              <div key={tool.id} className="tool-check tool-card disabled" aria-disabled="true">
+                <ToolLogo id={tool.id} />
+                <div>
+                  <div className="tool-name">{tool.name}</div>
+                  <div className="tool-desc">{tool.description}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       </div>
 

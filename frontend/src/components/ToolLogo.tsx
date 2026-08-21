@@ -19,6 +19,7 @@ const BRANDS: Record<string, Brand> = {
   morningstar: { mark: "M", fg: "#ffffff", bg: "#EE1B2E" },
   aladdin: { mark: "AL", fg: "#ffffff", bg: "#1C1C1C" },
   sec_edgar: { mark: "SEC", fg: "#ffffff", bg: "#1F4E79" },
+  artifact_generator: { mark: "AG", fg: "#ffffff", bg: "#2563EB" },
 };
 
 const FALLBACK: Brand = { mark: "?", fg: "#ffffff", bg: "#6b6d7c" };
