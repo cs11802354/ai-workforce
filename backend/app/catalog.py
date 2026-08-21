@@ -93,6 +93,12 @@ TOOLS = [
         "description": "Company filings — 10-K, 10-Q, 8-K, S-1.",
         "enabled": False,
     },
+    {
+        "id": "artifact_generator",
+        "name": "Artifact Generator",
+        "description": "Generate a document (HTML/Markdown) and return a stable URL.",
+        "enabled": False,
+    },
 ]
 
 SKILLS_BY_ID = {s["id"]: s for s in SKILLS}

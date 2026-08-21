@@ -3,13 +3,21 @@
 `invoke_model_activity` is one master-task LLM call. `execute_tool_activity` is
 the tool dispatch — every finance adapter is currently a stub, but the call path
 around it is real, so connecting a live terminal means editing one function here.
+`artifact_generator` is the one live adapter today: it calls out to the
+artifact-service (a separate repo/deployment) over HTTP.
 """
 
+import os
+
+import httpx
 from temporalio import activity
 
 from catalog import SKILL_PROMPTS, TOOL_DISPLAY_NAMES, anthropic_tools, openai_tools
 
 MAX_TOKENS = 16000
+
+ARTIFACT_SERVICE_URL = os.environ.get("ARTIFACT_SERVICE_URL", "")
+ARTIFACT_API_KEY = os.environ.get("ARTIFACT_API_KEY", "")
 
 # Appended to every agent's system prompt. Without it models pad answers with
 # alternatives nobody asked for — a "not connected" tool reply came back with a
@@ -158,10 +166,14 @@ async def _call_openai(agent: dict, messages: list[dict]) -> dict:
 async def execute_tool_activity(tool_name: str, tool_input: dict) -> str:
     """Dispatch a tool call.
 
-    Every adapter is a stub today. The important part is that this runs as a real
+    Most adapters are stubs today. The important part is that this runs as a real
     Temporal activity with its own retry and timeout policy — swapping a stub for
-    a live API client is a local change with no workflow edit.
+    a live API client is a local change with no workflow edit. `artifact_generator`
+    is wired to a live adapter (`_call_artifact_service`) as an example of that.
     """
+    if tool_name == "artifact_generator":
+        return await _call_artifact_service(tool_input)
+
     display = TOOL_DISPLAY_NAMES.get(tool_name, tool_name)
     query = tool_input.get("query", "")
     activity.logger.info("tool call: %s(%r)", tool_name, query)
@@ -170,3 +182,35 @@ async def execute_tool_activity(tool_name: str, tool_input: dict) -> str:
         f"was returned for: {query!r}. Tell the user the data source is not "
         f"connected yet rather than estimating a value."
     )
+
+
+async def _call_artifact_service(spec: dict) -> str:
+    """Adapter for the artifact-service (separate repo). Posts the spec as-is
+    and turns the response into text the model can act on."""
+    if not ARTIFACT_SERVICE_URL:
+        return (
+            "Artifact Generator is not connected: ARTIFACT_SERVICE_URL is not "
+            "configured on the worker. Tell the user this tool isn't set up "
+            "rather than fabricating a document or URL."
+        )
+
+    headers = {"Authorization": f"Bearer {ARTIFACT_API_KEY}"} if ARTIFACT_API_KEY else {}
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            f"{ARTIFACT_SERVICE_URL.rstrip('/')}/v1/artifacts",
+            json=spec,
+            headers=headers,
+        )
+
+    if response.status_code == 422:
+        return f"The artifact spec was rejected as invalid: {response.text}"
+    response.raise_for_status()
+    result = response.json()
+
+    if result["status"] == "stored":
+        return f"Artifact created: {result['url']}"
+    if result["status"] == "qa_failed":
+        failures = "; ".join(result.get("qa", {}).get("failures", []))
+        return f"Artifact generation failed structural QA: {failures}"
+    return result.get("message", "Artifact generation did not complete.")
