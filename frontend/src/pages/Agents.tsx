@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
-import { avatarStyle, tint } from "../lib/colors";
+import { avatarStyle } from "../lib/colors";
+import { Badge } from "../components/Badge";
+import { buttonClass } from "../components/Button";
+import { Card, StatCard, StatGrid } from "../components/Card";
 import { IconAgents, IconCube, IconLayers, IconPlus } from "../components/Icon";
 import type { Agent } from "../types";
 
@@ -31,40 +34,14 @@ export function Agents() {
           <h1 className="page-title">Agents</h1>
           <p className="page-subtitle">{agents.length} managed</p>
         </div>
-        <Link to="/agents/new" className="btn btn-primary"><IconPlus size={15} /> New agent</Link>
+        <Link to="/agents/new" className={buttonClass("primary")}><IconPlus size={15} /> New agent</Link>
       </div>
 
-      {loading ? (
-        <div className="stat-grid">
-          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-          <div className="stat-card-item"><div className="skeleton skeleton-stat" style={{ width: "100%" }} /></div>
-        </div>
-      ) : (
-        <div className="stat-grid">
-          <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#6366F1")}><IconAgents size={18} /></div>
-            <div>
-              <div className="stat-value">{agents.length}</div>
-              <div className="stat-label">Total agents</div>
-            </div>
-          </div>
-          <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#3B82F6")}><IconCube size={18} /></div>
-            <div>
-              <div className="stat-value">{providerCount}</div>
-              <div className="stat-label">Providers in use</div>
-            </div>
-          </div>
-          <div className="stat-card-item">
-            <div className="stat-icon" style={tint("#14B8A6")}><IconLayers size={18} /></div>
-            <div>
-              <div className="stat-value">{toolCount}</div>
-              <div className="stat-label">Distinct tools</div>
-            </div>
-          </div>
-        </div>
-      )}
+      <StatGrid loading={loading}>
+        <StatCard icon={IconAgents} hue="#6366F1" value={agents.length} label="Total agents" />
+        <StatCard icon={IconCube} hue="#3B82F6" value={providerCount} label="Providers in use" />
+        <StatCard icon={IconLayers} hue="#14B8A6" value={toolCount} label="Distinct tools" />
+      </StatGrid>
 
       {!loading && agents.length === 0 && (
         <p className="empty-state">No agents yet — create your first one.</p>
@@ -73,7 +50,7 @@ export function Agents() {
       <div className="card-grid">
         {loading && [0, 1, 2].map((i) => <div key={i} className="skeleton skeleton-card" />)}
         {!loading && agents.map((agent, i) => (
-          <div key={agent.id} className="agent-card fade-up" style={{ animationDelay: `${i * 40}ms` }}>
+          <Card key={agent.id} className="fade-up" style={{ animationDelay: `${i * 40}ms` }}>
             <div className="agent-card-header">
               <div className="agent-avatar" style={avatarStyle(agent.id)}>
                 {agent.name.charAt(0).toUpperCase()}
@@ -84,23 +61,20 @@ export function Agents() {
               </div>
             </div>
             <div className="badge-row">
-              <span className="badge">
-                <span className="badge-dot" />
-                {agent.provider}
-              </span>
-              <span className="badge badge-muted">{agent.model}</span>
+              <Badge dot>{agent.provider}</Badge>
+              <Badge muted>{agent.model}</Badge>
               {agent.skills.map((tool) => (
-                <span key={tool} className="badge badge-muted">{tool}</span>
+                <Badge key={tool} muted>{tool}</Badge>
               ))}
             </div>
             <div className="agent-card-actions">
-              <Link to={`/agents/${agent.id}/edit`} className="btn btn-ghost btn-sm">Edit</Link>
-              <Link to={`/chat?agent=${agent.id}`} className="btn btn-ghost btn-sm">Chat</Link>
-              <button className="btn btn-ghost btn-sm btn-danger" onClick={() => handleDelete(agent.id)}>
+              <Link to={`/agents/${agent.id}/edit`} className={buttonClass("ghost", { size: "sm" })}>Edit</Link>
+              <Link to={`/chat?agent=${agent.id}`} className={buttonClass("ghost", { size: "sm" })}>Chat</Link>
+              <button className={buttonClass("ghost", { size: "sm", danger: true })} onClick={() => handleDelete(agent.id)}>
                 Delete
               </button>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

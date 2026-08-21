@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
+import { Badge } from "../components/Badge";
+import { buttonClass } from "../components/Button";
 import { IconArrowUp, IconPlus, IconX } from "../components/Icon";
+import { Markdown } from "../components/Markdown";
 import { avatarStyle } from "../lib/colors";
 import type { Agent, Conversation, Message } from "../types";
 
@@ -187,7 +190,7 @@ export function Chat() {
 
       <section className="chat-main">
         <div className="chat-head">
-          <button className="btn btn-ghost btn-sm chat-rail-toggle" onClick={() => setRailOpen((o) => !o)}>
+          <button className={buttonClass("ghost", { size: "sm", className: "chat-rail-toggle" })} onClick={() => setRailOpen((o) => !o)}>
             <IconPlus size={14} /> Chats
           </button>
           {activeAgent ? (
@@ -215,12 +218,12 @@ export function Chat() {
           {messages.map((m) =>
             m.role === "tool" ? (
               <div key={m.id} className="chat-tool">
-                <span className="badge badge-muted">used {m.tool_name}</span>
+                <Badge muted>used {m.tool_name}</Badge>
                 <span className="chat-tool-output">{m.content}</span>
               </div>
             ) : (
               <div key={m.id} className={`chat-bubble chat-${m.role}`}>
-                {m.content}
+                {m.role === "assistant" ? <Markdown content={m.content} /> : m.content}
               </div>
             )
           )}

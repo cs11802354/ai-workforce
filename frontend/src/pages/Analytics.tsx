@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import { AreaChart, type Point } from "../components/AreaChart";
+import { StatCard, StatGrid } from "../components/Card";
 import { IconAgents, IconBolt, IconClock, IconRuns } from "../components/Icon";
-import { tint } from "../lib/colors";
 import type { Agent, Run } from "../types";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -103,30 +103,11 @@ export function Analytics() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="stat-grid">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="stat-card-item">
-              <div className="skeleton skeleton-stat" style={{ width: "100%" }} />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="stat-grid">
-          {cards.map(({ label, sub, value, hue, Icon }) => (
-            <div key={label} className="stat-card-item">
-              <div className="stat-icon" style={tint(hue)}>
-                <Icon size={18} />
-              </div>
-              <div>
-                <div className="stat-value">{value}</div>
-                <div className="stat-label">{label}</div>
-                <div className="stat-sub">{sub}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <StatGrid loading={loading} skeletonCount={4}>
+        {cards.map(({ label, sub, value, hue, Icon }) => (
+          <StatCard key={label} icon={Icon} hue={hue} value={value} label={label} sub={sub} />
+        ))}
+      </StatGrid>
 
       <div className="section">
         <div className="section-header">
