@@ -37,11 +37,15 @@ class Article(dict):
 
 
 @activity.defn
-async def fetch_articles_activity() -> list[dict]:
+async def fetch_articles_activity(topics: list[str] | None = None) -> list[dict]:
+    queries = topics or GOOGLE_NEWS_QUERIES
     articles: list[dict] = []
     async with httpx.AsyncClient(timeout=15.0) as client:
-        for query in GOOGLE_NEWS_QUERIES:
+        for query in queries:
             articles.extend(await _fetch_google_news(client, query))
+        # HN/arXiv aren't topic-queryable the way Google News is — they stay
+        # in the candidate pool regardless of a custom topic list, and the
+        # curation prompt (which does get the topic list) filters relevance.
         articles.extend(await _fetch_hacker_news(client))
         articles.extend(await _fetch_arxiv(client))
 
@@ -129,9 +133,13 @@ async def _fetch_arxiv(client: httpx.AsyncClient) -> list[dict]:
     return out
 
 
-DIGEST_SYSTEM_PROMPT = """You curate a daily personal learning digest for a reader whose \
-background is AI/ML and software engineering (they build agentic systems, work with LLMs, \
-Temporal workflows, and distributed systems).
+DEFAULT_BACKGROUND = "AI/ML and software engineering (they build agentic systems, work with LLMs, Temporal workflows, and distributed systems)"
+
+
+def _digest_system_prompt(topics: list[str] | None) -> str:
+    background = ", ".join(topics) if topics else DEFAULT_BACKGROUND
+    return f"""You curate a daily personal learning digest for a reader whose background is \
+{background}.
 
 From the candidate articles you're given, select the ones that are genuinely interesting or \
 useful to that reader — favor substance (new research, real engineering write-ups, notable \
@@ -151,7 +159,7 @@ an <h1>. Do not include items that aren't in the candidate list. Do not fabricat
 
 
 @activity.defn
-async def summarize_digest_activity(articles: list[dict]) -> str:
+async def summarize_digest_activity(articles: list[dict], topics: list[str] | None = None) -> str:
     from anthropic import AsyncAnthropic
 
     client = AsyncAnthropic()
@@ -163,24 +171,25 @@ async def summarize_digest_activity(articles: list[dict]) -> str:
     response = await client.messages.create(
         model="claude-opus-5",
         max_tokens=8000,
-        system=DIGEST_SYSTEM_PROMPT,
+        system=_digest_system_prompt(topics),
         messages=[{"role": "user", "content": f"Candidate articles:\n\n{candidates}"}],
     )
     return "".join(b.text for b in response.content if b.type == "text")
 
 
 @activity.defn
-async def send_digest_email_activity(html_body: str) -> str:
-    if not RESEND_API_KEY or not DIGEST_RECIPIENT_EMAIL:
+async def send_digest_email_activity(html_body: str, recipient_email: str | None = None) -> str:
+    recipient = recipient_email or DIGEST_RECIPIENT_EMAIL
+    if not RESEND_API_KEY or not recipient:
         activity.logger.warning(
-            "digest email not sent: RESEND_API_KEY or DIGEST_RECIPIENT_EMAIL not configured"
+            "digest email not sent: RESEND_API_KEY or recipient not configured"
         )
         return "not_configured"
 
     date_str = datetime.now(timezone.utc).astimezone().strftime("%A, %B %d")
     payload = {
         "from": RESEND_FROM_EMAIL,
-        "to": [DIGEST_RECIPIENT_EMAIL],
+        "to": [recipient],
         "subject": f"Daily digest — {date_str}",
         "html": f"<div style=\"font-family: system-ui, sans-serif; max-width: 700px; margin: 0 auto;\">{html_body}</div>",
     }

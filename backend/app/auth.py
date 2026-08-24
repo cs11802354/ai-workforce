@@ -72,5 +72,15 @@ async def require_auth(request: Request) -> None:
         raise HTTPException(401, "Not authenticated")
 
 
+async def require_internal_key(request: Request) -> None:
+    """Gates worker-to-backend calls. Always enforced, even with no key
+    configured — unlike require_auth, an unset key means "reject everything,"
+    not "gate disabled," because this endpoint sits on the public backend URL."""
+    key = request.headers.get("x-internal-key", "")
+    if not settings.internal_api_key or not secrets.compare_digest(key, settings.internal_api_key):
+        raise HTTPException(401, "Not authenticated")
+
+
 # Applied to every data router; the login and health routes stay open.
 AuthDep = Depends(require_auth)
+InternalAuthDep = Depends(require_internal_key)

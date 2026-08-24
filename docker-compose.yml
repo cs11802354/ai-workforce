@@ -61,6 +61,7 @@ services:
       KNOWLEDGE_DIR: /data/knowledge
       CORS_ORIGINS: ${CORS_ORIGINS}
       APP_PASSWORD: ${APP_PASSWORD}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
     volumes:
       - knowledge_data:/data/knowledge
     ports:
@@ -84,6 +85,8 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY}
       RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-onboarding@resend.dev}
       DIGEST_RECIPIENT_EMAIL: ${DIGEST_RECIPIENT_EMAIL}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
+      BACKEND_INTERNAL_URL: http://backend:8000
     networks:
       - default
       - agent-net

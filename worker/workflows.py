@@ -29,13 +29,17 @@ class AgentConversationWorkflow:
     def __init__(self) -> None:
         self._messages: list[dict] = []
         self._agent: dict = {}
+        self._conversation_id = ""
         self._busy = False
         self._ready = False
 
     @workflow.run
-    async def run(self, agent: dict, history: list[dict] | None = None) -> list[dict]:
+    async def run(
+        self, agent: dict, history: list[dict] | None = None, conversation_id: str = ""
+    ) -> list[dict]:
         self._agent = agent
         self._messages = list(history or [])
+        self._conversation_id = conversation_id
         self._ready = True
 
         while True:
@@ -51,7 +55,7 @@ class AgentConversationWorkflow:
                     continue
                 return self._messages
 
-            workflow.continue_as_new(args=[self._agent, self._messages])
+            workflow.continue_as_new(args=[self._agent, self._messages, self._conversation_id])
 
     @workflow.update(name="send_message")
     async def send_message(self, text: str) -> dict:
@@ -101,7 +105,12 @@ class AgentConversationWorkflow:
             for call in calls:
                 output = await workflow.execute_activity(
                     execute_tool_activity,
-                    args=[call["name"], call["input"]],
+                    args=[
+                        call["name"],
+                        call["input"],
+                        self._conversation_id,
+                        self._agent.get("id", ""),
+                    ],
                     start_to_close_timeout=timedelta(minutes=2),
                     retry_policy=RetryPolicy(maximum_attempts=2),
                 )

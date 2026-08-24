@@ -93,6 +93,27 @@ class RunOut(BaseModel):
     completed_at: datetime | None
 
 
+class ScheduledTaskCreate(BaseModel):
+    conversation_id: uuid.UUID
+    agent_id: uuid.UUID
+    task_type: str = Field(min_length=1, max_length=50)
+    temporal_schedule_id: str = Field(min_length=1, max_length=200)
+    params: dict = {}
+
+
+class ScheduledTaskOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    conversation_id: uuid.UUID
+    agent_id: uuid.UUID
+    task_type: str
+    temporal_schedule_id: str
+    params: dict
+    status: str
+    created_at: datetime
+
+
 class CatalogItem(BaseModel):
     id: str
     name: str

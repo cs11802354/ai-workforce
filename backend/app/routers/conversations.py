@@ -27,6 +27,7 @@ def _agent_snapshot(agent: Agent) -> dict:
     """Frozen copy of the agent config handed to the workflow, so editing an
     agent mid-conversation doesn't retroactively change an in-flight turn."""
     return {
+        "id": str(agent.id),
         "name": agent.name,
         "role": agent.role,
         "provider": agent.provider,
@@ -180,7 +181,7 @@ async def send_message(
     run.temporal_workflow_id = workflow_id
     start_op = WithStartWorkflowOperation(
         "AgentConversationWorkflow",
-        args=[_agent_snapshot(agent), _history_for(conversation)],
+        args=[_agent_snapshot(agent), _history_for(conversation), str(conversation.id)],
         id=workflow_id,
         task_queue=settings.temporal_task_queue,
         # USE_EXISTING attaches to a live workflow; ALLOW_DUPLICATE lets a fresh

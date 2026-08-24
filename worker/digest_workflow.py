@@ -19,9 +19,10 @@ class DailyDigestWorkflow:
     just waits for tomorrow's trigger rather than being redone same-day."""
 
     @workflow.run
-    async def run(self) -> str:
+    async def run(self, topics: list[str] | None = None, recipient_email: str | None = None) -> str:
         articles = await workflow.execute_activity(
             fetch_articles_activity,
+            topics,
             start_to_close_timeout=timedelta(minutes=2),
             retry_policy=RetryPolicy(maximum_attempts=3),
         )
@@ -31,14 +32,14 @@ class DailyDigestWorkflow:
 
         html = await workflow.execute_activity(
             summarize_digest_activity,
-            articles,
+            args=[articles, topics],
             start_to_close_timeout=timedelta(minutes=3),
             retry_policy=RetryPolicy(maximum_attempts=2),
         )
 
         return await workflow.execute_activity(
             send_digest_email_activity,
-            html,
+            args=[html, recipient_email],
             start_to_close_timeout=timedelta(minutes=1),
             retry_policy=RetryPolicy(maximum_attempts=3),
         )

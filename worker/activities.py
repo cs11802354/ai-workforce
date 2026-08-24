@@ -163,16 +163,24 @@ async def _call_openai(agent: dict, messages: list[dict]) -> dict:
 
 
 @activity.defn
-async def execute_tool_activity(tool_name: str, tool_input: dict) -> str:
+async def execute_tool_activity(
+    tool_name: str, tool_input: dict, conversation_id: str = "", agent_id: str = ""
+) -> str:
     """Dispatch a tool call.
 
     Most adapters are stubs today. The important part is that this runs as a real
     Temporal activity with its own retry and timeout policy — swapping a stub for
     a live API client is a local change with no workflow edit. `artifact_generator`
-    is wired to a live adapter (`_call_artifact_service`) as an example of that.
+    and `schedule_task` are wired to live adapters as examples of that.
+    `conversation_id`/`agent_id` are only used by `schedule_task`, which needs to
+    know what conversation created a schedule to record it.
     """
     if tool_name == "artifact_generator":
         return await _call_artifact_service(tool_input)
+    if tool_name == "schedule_task":
+        from scheduler import create_scheduled_task
+
+        return await create_scheduled_task(tool_input, conversation_id, agent_id)
 
     display = TOOL_DISPLAY_NAMES.get(tool_name, tool_name)
     query = tool_input.get("query", "")
