@@ -49,6 +49,38 @@ _ARTIFACT_SPEC = {
     "required": ["title", "format", "sections"],
 }
 
+_SCHEDULE_TASK_SPEC = {
+    "type": "object",
+    "properties": {
+        "task_type": {
+            "type": "string",
+            "enum": ["daily_digest"],
+            "description": "Type of recurring task. Only daily_digest is supported today.",
+        },
+        "time": {
+            "type": "string",
+            "description": "24h local time to run, HH:MM, e.g. '08:00'. Defaults to 08:00.",
+        },
+        "timezone": {
+            "type": "string",
+            "description": "IANA timezone name, e.g. 'Asia/Kolkata'. Defaults to Asia/Kolkata.",
+        },
+        "recipient_email": {
+            "type": "string",
+            "description": "Email address to send the task's output to.",
+        },
+        "topics": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": (
+                "Optional topics/background to focus a daily_digest on. Defaults to "
+                "AI/ML and software engineering if omitted."
+            ),
+        },
+    },
+    "required": ["task_type", "recipient_email"],
+}
+
 TOOL_SCHEMAS = {
     "bloomberg": {
         "name": "bloomberg",
@@ -99,6 +131,14 @@ TOOL_SCHEMAS = {
         ),
         "input_schema": _ARTIFACT_SPEC,
     },
+    "schedule_task": {
+        "name": "schedule_task",
+        "description": (
+            "Schedule a recurring background task. Only 'daily_digest' (a personalized "
+            "daily learning-article email) is supported right now."
+        ),
+        "input_schema": _SCHEDULE_TASK_SPEC,
+    },
 }
 
 TOOL_DISPLAY_NAMES = {
@@ -111,6 +151,7 @@ TOOL_DISPLAY_NAMES = {
     "aladdin": "BlackRock Aladdin",
     "sec_edgar": "SEC EDGAR",
     "artifact_generator": "Artifact Generator",
+    "schedule_task": "Task Scheduler",
 }
 
 

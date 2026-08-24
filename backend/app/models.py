@@ -92,3 +92,22 @@ class Run(Base):
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     agent: Mapped["Agent"] = relationship(back_populates="runs")
+
+
+class ScheduledTask(Base):
+    """A recurring background task created by a tool call mid-conversation
+    (e.g. schedule_task -> a Temporal Schedule). The conversation that created
+    it is kept for traceability, not because the task depends on it."""
+
+    __tablename__ = "scheduled_tasks"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
+    conversation_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("conversations.id", ondelete="CASCADE")
+    )
+    agent_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("agents.id", ondelete="CASCADE"))
+    task_type: Mapped[str] = mapped_column(String(50))
+    temporal_schedule_id: Mapped[str] = mapped_column(String(200))
+    params: Mapped[dict] = mapped_column(JSON, default=dict)
+    status: Mapped[str] = mapped_column(String(20), default="active")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)

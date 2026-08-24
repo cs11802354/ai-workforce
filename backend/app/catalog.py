@@ -99,6 +99,12 @@ TOOLS = [
         "description": "Generate a document (HTML/Markdown) and return a stable URL.",
         "enabled": False,
     },
+    {
+        "id": "schedule_task",
+        "name": "Task Scheduler",
+        "description": "Schedule a recurring background task (currently: daily digest email).",
+        "enabled": False,
+    },
 ]
 
 SKILLS_BY_ID = {s["id"]: s for s in SKILLS}

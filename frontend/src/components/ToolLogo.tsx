@@ -20,6 +20,7 @@ const BRANDS: Record<string, Brand> = {
   aladdin: { mark: "AL", fg: "#ffffff", bg: "#1C1C1C" },
   sec_edgar: { mark: "SEC", fg: "#ffffff", bg: "#1F4E79" },
   artifact_generator: { mark: "AG", fg: "#ffffff", bg: "#2563EB" },
+  schedule_task: { mark: "ST", fg: "#ffffff", bg: "#7C3AED" },
 };
 
 const FALLBACK: Brand = { mark: "?", fg: "#ffffff", bg: "#6b6d7c" };

@@ -8,7 +8,7 @@ import type { Agent, Skill, Tool } from "../types";
 
 // Every other tool's adapter is still a stub; artifact_generator is the one
 // with a live backend, so it's the only tool card that's actually clickable.
-const INTERACTIVE_TOOL_IDS = new Set(["artifact_generator"]);
+const INTERACTIVE_TOOL_IDS = new Set(["artifact_generator", "schedule_task"]);
 
 const PROVIDER_MODELS: Record<string, string[]> = {
   anthropic: ["claude-opus-5", "claude-sonnet-5", "claude-haiku-4-5"],
