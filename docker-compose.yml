@@ -81,6 +81,9 @@ services:
       TRUST_PANEL_TIER: ${TRUST_PANEL_TIER:-economy}
       ARTIFACT_SERVICE_URL: ${ARTIFACT_SERVICE_URL}
       ARTIFACT_API_KEY: ${ARTIFACT_API_KEY}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-onboarding@resend.dev}
+      DIGEST_RECIPIENT_EMAIL: ${DIGEST_RECIPIENT_EMAIL}
     networks:
       - default
       - agent-net
